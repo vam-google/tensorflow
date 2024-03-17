@@ -20,6 +20,7 @@ CollectedPywrapInfo = provider(
 PywrapFilters = provider(
     fields = {
         "py_cc_linker_inputs": "",
+        "cc_linker_inputs" : "",
         "pywrap_private_linker_inputs": "",
     }
 )
@@ -27,7 +28,8 @@ PywrapFilters = provider(
 def pywrap_library(
         name,
         deps,
-        py_cc_deps = [],
+        py_cc_deps_filter = [],
+        cc_deps_filter = [],
         linkopts = [],
         py_cc_linkopts = [],
         win_def_file = None,
@@ -58,7 +60,8 @@ def pywrap_library(
     _linker_input_filters(
         name = linker_input_filters_name,
         dep = ":%s" % info_collector_name,
-        py_cc_deps = py_cc_deps,
+        py_cc_deps_filter = py_cc_deps_filter,
+        cc_deps_filter = cc_deps_filter,
     )
 
     # _internal binary
@@ -96,7 +99,11 @@ def pywrap_library(
     common_py_cc_binary_name = "%s_py_internal" % name
     common_py_import_name = _construct_common_binary(
         common_py_cc_binary_name,
-        [":%s" % py_common_split_name, ":%s" % common_import_name],
+        [
+            ":%s" % py_common_split_name,
+            ":%s" % common_import_name,
+            Label("@pybind11//:pybind11")
+        ],
         py_cc_linkopts,
         testonly,
         compatible_with,
@@ -238,6 +245,7 @@ def _pywrap_split_library_impl(ctx):
     mode = ctx.attr.mode
     filters = ctx.attr.linker_input_filters[PywrapFilters]
     py_cc_linker_inputs = filters.py_cc_linker_inputs
+#    cc_linker_inputs = filters.cc_linker_inputs
 
     if mode == "pywrap":
         pw = pywrap_infos[pywrap_index]
@@ -335,9 +343,14 @@ def _construct_dependency_libraries(ctx, split_linker_inputs):
 
 def _linker_input_filters_impl(ctx):
     py_cc_linker_inputs = {}
-    for py_cc_dep in ctx.attr.py_cc_deps:
+    for py_cc_dep in ctx.attr.py_cc_deps_filter:
         for li in py_cc_dep[CcInfo].linking_context.linker_inputs.to_list()[:1]:
             py_cc_linker_inputs[li] = li.owner
+
+    cc_linker_inputs = {}
+    for cc_dep in ctx.attr.cc_deps_filter:
+        for li in cc_dep[CcInfo].linking_context.linker_inputs.to_list()[:1]:
+            cc_linker_inputs[li] = li.owner
 
     pywrap_infos = ctx.attr.dep[CollectedPywrapInfo].pywrap_infos.to_list()
     pywrap_private_linker_inputs = []
@@ -345,13 +358,15 @@ def _linker_input_filters_impl(ctx):
     for pw in pywrap_infos:
         private_linker_inputs = {}
         for private_dep in pw.private_deps:
-            for linker_input in private_dep[CcInfo].linking_context.linker_inputs.to_list():
-                private_linker_inputs[linker_input] = linker_input.owner
+            for priv_li in private_dep[CcInfo].linking_context.linker_inputs.to_list():
+                if (priv_li not in py_cc_linker_inputs) and (priv_li not in cc_linker_inputs):
+                    private_linker_inputs[priv_li] = priv_li.owner
         pywrap_private_linker_inputs.append(private_linker_inputs)
 
     return [
         PywrapFilters(
             py_cc_linker_inputs = py_cc_linker_inputs,
+            cc_linker_inputs = cc_linker_inputs,
             pywrap_private_linker_inputs = pywrap_private_linker_inputs
         )
     ]
@@ -362,7 +377,13 @@ _linker_input_filters = rule(
             allow_files = False,
             providers = [CollectedPywrapInfo],
         ),
-        "py_cc_deps": attr.label_list(
+        "py_cc_deps_filter": attr.label_list(
+            allow_files = False,
+            providers = [CcInfo],
+            mandatory = False,
+            default = [],
+        ),
+        "cc_deps_filter": attr.label_list(
             allow_files = False,
             providers = [CcInfo],
             mandatory = False,

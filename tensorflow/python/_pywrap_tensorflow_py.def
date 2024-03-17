@@ -1,0 +1,239 @@
+EXPORTS
+;pywrap_function
+;_pywrap_snapshot_utils
+;_pywrap_python_api_dispatche
+  ??0PythonAPIDispatcher@py_dispatch@tensorflow@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$Span@PEBD@lts_20230802@absl@@V?$Span@PEAU_object@@@67@@Z
+  ?Register@PythonAPIDispatcher@py_dispatch@tensorflow@@QEAAXVPySignatureChecker@23@PEAU_object@@@Z
+  ?Dispatch@PythonAPIDispatcher@py_dispatch@tensorflow@@QEAA?AV?$unique_ptr@U_object@@UPyDecrefDeleter@detail@tensorflow@@@std@@PEAU_object@@0@Z
+  ?Unregister@PythonAPIDispatcher@py_dispatch@tensorflow@@QEAAXPEAU_object@@@Z
+  ?DebugString@PythonAPIDispatcher@py_dispatch@tensorflow@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+  ?RegisterDispatchableType@py_dispatch@tensorflow@@YA_NPEAU_object@@@Z
+  ??0PySignatureChecker@py_dispatch@tensorflow@@QEAA@V?$vector@U?$pair@HV?$shared_ptr@VPyTypeChecker@py_dispatch@tensorflow@@@std@@@std@@V?$allocator@U?$pair@HV?$shared_ptr@VPyTypeChecker@py_dispatch@tensorflow@@@std@@@std@@@2@@std@@@Z
+  ?CheckCanonicalizedArgs@PySignatureChecker@py_dispatch@tensorflow@@QEBA_NV?$Span@PEAU_object@@@lts_20230802@absl@@@Z
+  ?DebugString@PySignatureChecker@py_dispatch@tensorflow@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+  ??0PyInstanceChecker@py_dispatch@tensorflow@@QEAA@AEBV?$vector@PEAU_object@@V?$allocator@PEAU_object@@@std@@@std@@@Z
+  ?Check@PyListChecker@py_dispatch@tensorflow@@UEAA?AW4MatchType@PyTypeChecker@23@PEAU_object@@@Z
+  ?cost@PyListChecker@py_dispatch@tensorflow@@UEBAHXZ
+  ?DebugString@PyListChecker@py_dispatch@tensorflow@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+  ?Check@PyUnionChecker@py_dispatch@tensorflow@@UEAA?AW4MatchType@PyTypeChecker@23@PEAU_object@@@Z
+  ?cost@PyUnionChecker@py_dispatch@tensorflow@@UEBAHXZ
+  ?DebugString@PyUnionChecker@py_dispatch@tensorflow@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+;_math_ops
+  ?Lookup@PyExceptionRegistry@tensorflow@@SAPEAU_object@@W4TSL_Code@@@Z
+;_op_def_registry
+;_flags_pybind
+;_pywrap_tensor_float_32_execution
+;_pywrap_device_lib
+;_function_parameter_canonicalizer_binding_for_test
+  ?Canonicalize@FunctionParameterCanonicalizer@tensorflow@@QEAA_NPEAU_object@@0V?$Span@PEAU_object@@@lts_20230802@absl@@@Z
+  ??0FunctionParameterCanonicalizer@tensorflow@@QEAA@V?$Span@PEBD@lts_20230802@absl@@V?$Span@PEAU_object@@@34@@Z
+;_pywrap_events_writer
+;_unified_api
+  ?EagerTensor_CheckExact@@YA_NPEBU_object@@@Z
+  ?EagerTensor_Handle@@YAPEAUTFE_TensorHandle@@PEBU_object@@@Z
+  ?TFE_TensorHandleToNumpy@tensorflow@@YAPEAU_object@@PEAUTFE_TensorHandle@@PEAUTSL_Status@@@Z
+  ?Lookup@PyExceptionRegistry@tensorflow@@SAPEAU_object@@W4TSL_Code@@@Z
+;_pywrap_util_port
+;_pywrap_record_io
+  ?Lookup@PyExceptionRegistry@tensorflow@@SAPEAU_object@@W4TSL_Code@@@Z
+;_pywrap_stacktrace_handler
+;_tape
+  ?Lookup@PyExceptionRegistry@tensorflow@@SAPEAU_object@@W4TSL_Code@@@Z
+;_pywrap_toco_api
+  ?TocoConvert@toco@@YAPEAU_object@@PEAU2@00_N01@Z
+  ?MlirQuantizeModel@toco@@YAPEAU_object@@PEAU2@_N1HHH11001@Z
+  ?MlirSparsifyModel@toco@@YAPEAU_object@@PEAU2@@Z
+  ?RegisterCustomOpdefs@toco@@YAPEAU_object@@PEAU2@@Z
+  ?RetrieveCollectedErrors@toco@@YA?BV?$vector@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$allocator@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@@std@@XZ
+  ?FlatBufferFileToMlir@toco@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV23@_N@Z
+;_pywrap_traceme
+;_pywrap_mlir
+  ?Lookup@PyExceptionRegistry@tensorflow@@SAPEAU_object@@W4TSL_Code@@@Z
+;_pywrap_utils
+;_pywrap_python_tensor_converter
+  ?TFE_GetPythonString@@YAPEBDPEAU_object@@@Z
+  ?Convert@PythonTensorConverter@tensorflow@@QEBA?AV?$unique_ptr@U_object@@UPyDecrefDeleter@detail@tensorflow@@@std@@PEAU_object@@AEAW4DataType@2@PEA_N@Z
+;_op_def_util
+  ?AttributeTypeFromName@tensorflow@@YA?AW4AttributeType@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+  ?ConvertPyObjectToAttributeType@tensorflow@@YA?AV?$unique_ptr@U_object@@UPyDecrefDeleter@detail@tensorflow@@@std@@PEAU_object@@W4AttributeType@1@@Z
+  ?AttrValueToPyObject@tensorflow@@YA?AV?$unique_ptr@U_object@@UPyDecrefDeleter@detail@tensorflow@@@std@@AEBVAttrValue@1@@Z
+;_pywrap_debug_events_writer
+;_pywrap_tf_item
+  ?Lookup@PyExceptionRegistry@tensorflow@@SAPEAU_object@@W4TSL_Code@@@Z
+;_pywrap_python_api_parameter_converter
+  ?ConvertPythonAPIParameters@tensorflow@@YA_NAEBVPythonAPIInfo@1@AEBVPythonTensorConverter@1@V?$Span@PEAU_object@@@lts_20230802@absl@@PEAUInferredAttributes@21@@Z
+  ?CopyPythonAPITensorLists@tensorflow@@YA_NAEBVPythonAPIInfo@1@V?$Span@PEAU_object@@@lts_20230802@absl@@@Z
+;_errors_test_helper
+  ?Lookup@PyExceptionRegistry@tensorflow@@SAPEAU_object@@W4TSL_Code@@@Z
+;_pywrap_cost_analyzer
+;_op_def_library_pybind
+  ?AttributeTypeFromName@tensorflow@@YA?AW4AttributeType@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+  ?ConvertPyObjectToAttributeType@tensorflow@@YA?AV?$unique_ptr@U_object@@UPyDecrefDeleter@detail@tensorflow@@@std@@PEAU_object@@W4AttributeType@1@@Z
+  ?DataTypeToPyObject@tensorflow@@YA?AV?$unique_ptr@U_object@@UPyDecrefDeleter@detail@tensorflow@@@std@@AEBW4DataType@1@@Z
+;_proto_comparators
+;_pywrap_python_api_info
+  ??0PythonAPIInfo@tensorflow@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+  ?InitializeFromRegisteredOp@PythonAPIInfo@tensorflow@@QEAA?AVStatus@lts_20230802@absl@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+  ?InitializeFromParamSpecs@PythonAPIInfo@tensorflow@@QEAA?AVStatus@lts_20230802@absl@@AEBV?$map@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V12@U?$less@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@V?$allocator@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V12@@std@@@2@@std@@0V?$vector@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$allocator@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@@7@PEAU_object@@@Z
+  ?DebugInfo@PythonAPIInfo@tensorflow@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+;_pywrap_model_analyzer
+;pywrap_saved_model
+;_pywrap_tf_cluster
+  ?Lookup@PyExceptionRegistry@tensorflow@@SAPEAU_object@@W4TSL_Code@@@Z
+;_test_metrics_util
+;_pywrap_py_func
+  ?InitializePyTrampoline@tensorflow@@YAXPEAU_object@@@Z
+;_pywrap_profiler
+  ?Lookup@PyExceptionRegistry@tensorflow@@SAPEAU_object@@W4TSL_Code@@@Z
+;_pywrap_kernel_registry
+;_pywrap_tfe
+  ?ImportNumpy@tsl@@YAXXZ
+  ?Get@TFE_TensorHandleCache@tensorflow@@SAPEAU12@XZ
+  ?Clear@TFE_TensorHandleCache@tensorflow@@QEAAXXZ
+  ?TFE_Py_ExecuteCancelable@@YAXPEAUTFE_Context@@PEBD1PEAV?$InlinedVector@PEAUTFE_TensorHandle@@$03V?$allocator@PEAUTFE_TensorHandle@@@std@@@lts_20230802@absl@@PEAU_object@@PEAUTFE_CancellationManager@@PEAV?$InlinedVector@PEAUTFE_TensorHandle@@$01V?$allocator@PEAUTFE_TensorHandle@@@std@@@34@PEAUTSL_Status@@@Z
+  ?TFE_Py_RegisterExceptionClass@@YAPEAU_object@@PEAU1@@Z
+  ?TFE_Py_RegisterVSpace@@YAPEAU_object@@PEAU1@@Z
+  ?TFE_Py_RegisterFallbackExceptionClass@@YAPEAU_object@@PEAU1@@Z
+  ?TFE_Py_RegisterGradientFunction@@YAPEAU_object@@PEAU1@@Z
+  ?TFE_Py_RegisterJVPFunction@@YAPEAU_object@@PEAU1@@Z
+  ?TFE_GetPythonString@@YAPEBDPEAU_object@@@Z
+  ?TFE_Py_UID@@YAPEAU_object@@XZ
+  ?TFE_DeleteContextCapsule@@YAXPEAU_object@@@Z
+  ?EagerTensor_CheckExact@@YA_NPEBU_object@@@Z
+  ?EagerTensorFromHandle@@YAPEAU_object@@PEAUTFE_TensorHandle@@_N@Z
+  ?EagerTensor_Handle@@YAPEAUTFE_TensorHandle@@PEBU_object@@@Z
+  ?TFE_Py_InitEagerTensor@@YAPEAU_object@@PEAU1@@Z
+  ?TFE_Py_SetEagerTensorProfiler@@YAPEAU_object@@PEAU1@@Z
+  ?TFE_Py_TapeSetNew@@YAPEAU_object@@PEAU1@0@Z
+  ?TFE_Py_TapeSetRemove@@YAXPEAU_object@@@Z
+  ?TFE_Py_TapeSetAdd@@YAXPEAU_object@@@Z
+  ?TFE_Py_TapeSetIsEmpty@@YAPEAU_object@@XZ
+  ?TFE_Py_TapeSetShouldRecordBackprop@@YAPEAU_object@@PEAU1@@Z
+  ?TFE_Py_TapeSetPossibleGradientTypes@@YAPEAU_object@@PEAU1@@Z
+  ?TFE_Py_TapeWatch@@YAXPEAU_object@@0@Z
+  ?TFE_Py_TapeSetDeleteTrace@@YAX_J@Z
+  ?TFE_Py_TapeSetStopOnThread@@YAXXZ
+  ?TFE_Py_TapeSetRestartOnThread@@YAXXZ
+  ?TFE_Py_TapeSetIsStopped@@YAPEAU_object@@XZ
+  ?TFE_Py_TapeSetRecordOperation@@YAPEAU_object@@PEAU1@0000@Z
+  ?TFE_Py_TapeSetRecordOperationBackprop@@YAPEAU_object@@PEAU1@000@Z
+  ?TFE_Py_TapeSetRecordOperationForwardprop@@YAPEAU_object@@PEAU1@0000@Z
+  ?TFE_Py_TapeVariableAccessed@@YAXPEAU_object@@@Z
+  ?TFE_Py_TapeWatchVariable@@YAXPEAU_object@@0@Z
+  ?TFE_Py_TapeGradient@@YAPEAU_object@@PEAU1@00000PEAUTSL_Status@@@Z
+  ?TFE_Py_FastPathExecute_C@@YAPEAU_object@@PEAU1@@Z
+  ?TFE_Py_RecordGradient@@YAPEAU_object@@PEAU1@0000@Z
+  ?TFE_Py_TapeWatchedVariables@@YAPEAU_object@@PEAU1@@Z
+  ?TFE_Py_ForwardAccumulatorNew@@YAPEAU_object@@_N@Z
+  ?TFE_Py_ForwardAccumulatorSetAdd@@YAPEAU_object@@PEAU1@@Z
+  ?TFE_Py_ForwardAccumulatorSetRemove@@YAXPEAU_object@@@Z
+  ?TFE_Py_ForwardAccumulatorWatch@@YAXPEAU_object@@00@Z
+  ?TFE_Py_ForwardAccumulatorJVP@@YAPEAU_object@@PEAU1@0@Z
+  ?TFE_Py_ForwardAccumulatorPushState@@YAPEAU_object@@XZ
+  ?TFE_Py_ForwardAccumulatorPopState@@YAPEAU_object@@XZ
+  ?TFE_Py_PackJVPs@@YAPEAU_object@@PEAU1@@Z
+  ?TFE_Py_VariableWatcherNew@@YAPEAU_object@@XZ
+  ?TFE_Py_VariableWatcherRemove@@YAXPEAU_object@@@Z
+  ?TFE_Py_VariableWatcherVariableAccessed@@YAXPEAU_object@@@Z
+  ?TFE_Py_VariableWatcherWatchedVariables@@YAPEAU_object@@PEAU1@@Z
+  ?TFE_Py_TensorShapeSlice@@YAPEAU_object@@PEAU1@H@Z
+  ?TFE_Py_TensorShapeOnDevice@@YAPEAU_object@@PEAU1@@Z
+  ?TFE_Py_EnableInteractivePythonLogging@@YAXXZ
+  ?TFE_Py_SetEagerContext@@YAPEAU_object@@PEAU1@@Z
+  ?MakeEagerContextThreadLocalData@tensorflow@@YAXPEAU_object@@00@Z
+  ?GetEagerContextThreadLocalData@tensorflow@@YAPEAUEagerContextThreadLocalData@1@PEAU_object@@@Z
+  ?DestroyEagerContextThreadLocalData@tensorflow@@YAXPEAU_object@@@Z
+  ?Lookup@PyExceptionRegistry@tensorflow@@SAPEAU_object@@W4TSL_Code@@@Z
+  ?IsTensor@swig@tensorflow@@YA_NPEAU_object@@@Z
+  ?IsTensorSpec@swig@tensorflow@@YA_NPEAU_object@@@Z
+  ?IsEagerTensorSlow@swig@tensorflow@@YA_NPEAU_object@@@Z
+  ?IsTensorProtocol@swig@tensorflow@@YA_NPEAU_object@@@Z
+  ?IsCoreTypeValue@swig@tensorflow@@YA_NPEAU_object@@@Z
+;_pywrap_py_exception_registry
+  ?Init@PyExceptionRegistry@tensorflow@@SAXPEAU_object@@@Z
+  ?Lookup@PyExceptionRegistry@tensorflow@@SAPEAU_object@@W4TSL_Code@@@Z
+;_pywrap_quantization
+;_fast_module_type
+;_py_context_manager
+  ?Enter@PyContextManager@tensorflow@@QEAA_NPEAU_object@@@Z
+  ??1PyContextManager@tensorflow@@QEAA@XZ
+;_pywrap_checkpoint_reader
+  ?TensorToNdarray@tensorflow@@YA?AVStatus@lts_20230802@absl@@AEBVTensor@1@PEAPEAU_object@@@Z
+;_filecheck_wrapper
+;_pywrap_cpu_feature_guard
+;_pywrap_nest
+  ?FlattenDictItems@tensorflow@@YAPEAU_object@@PEAU2@@Z
+;_pywrap_tfprof
+;_pywrap_determinism
+;_pywrap_utils
+  ?IsNested@swig@tensorflow@@YA_NPEAU_object@@@Z
+  ?IsNestedOrComposite@swig@tensorflow@@YA_NPEAU_object@@@Z
+  ?IsCompositeTensor@swig@tensorflow@@YA_NPEAU_object@@@Z
+  ?IsTypeSpec@swig@tensorflow@@YA_NPEAU_object@@@Z
+  ?IsNamedtuple@swig@tensorflow@@YAPEAU_object@@PEAU3@_N@Z
+  ?IsMapping@swig@tensorflow@@YA_NPEAU_object@@@Z
+  ?IsMutableMapping@swig@tensorflow@@YA_NPEAU_object@@@Z
+  ?IsMappingView@swig@tensorflow@@YA_NPEAU_object@@@Z
+  ?IsAttrs@swig@tensorflow@@YA_NPEAU_object@@@Z
+  ?IsTensor@swig@tensorflow@@YA_NPEAU_object@@@Z
+  ?IsResourceVariable@swig@tensorflow@@YA_NPEAU_object@@@Z
+  ?IsVariable@swig@tensorflow@@YA_NPEAU_object@@@Z
+  ?SameNamedtuples@swig@tensorflow@@YAPEAU_object@@PEAU3@0@Z
+  ?AssertSameStructure@swig@tensorflow@@YAPEAU_object@@PEAU3@0_N1@Z
+  ?Flatten@swig@tensorflow@@YAPEAU_object@@PEAU3@_N@Z
+  ?IsNestedForData@swig@tensorflow@@YA_NPEAU_object@@@Z
+  ?FlattenForData@swig@tensorflow@@YAPEAU_object@@PEAU3@@Z
+  ?AssertSameStructureForData@swig@tensorflow@@YAPEAU_object@@PEAU3@0_N@Z
+  ?RegisterPyObject@swig@tensorflow@@YAPEAU_object@@PEAU3@0@Z
+  ?RegisterType@swig@tensorflow@@YAPEAU_object@@PEAU3@0@Z
+;_pywrap_python_op_gen
+;_pywrap_tfcompile
+;_tfr_wrapper
+;_dtypes
+;_pywrap_parallel_device
+;_pywrap_quantize_training
+;_pywrap_tf2
+;_pywrap_file_io
+  ?Lookup@PyExceptionRegistry@tensorflow@@SAPEAU_object@@W4TSL_Code@@@Z
+;_nn_ops
+  ?Lookup@PyExceptionRegistry@tensorflow@@SAPEAU_object@@W4TSL_Code@@@Z
+;_pywrap_quantize_model
+;_tf_stack
+  ?Capture@StackTrace@tensorflow@@SA?AV?$shared_ptr@VStackTrace@tensorflow@@@std@@H@Z
+;_pywrap_server_lib
+;_pywrap_xla_ops
+;_pywrap_tpu_embedding
+;_pywrap_calibration
+;_pywrap_tf_optimizer
+  ?Lookup@PyExceptionRegistry@tensorflow@@SAPEAU_object@@W4TSL_Code@@@Z
+;_pywrap_dtensor
+  ?EagerTensor_CheckExact@@YA_NPEBU_object@@@Z
+  ?EagerTensor_Handle@@YAPEAUTFE_TensorHandle@@PEBU_object@@@Z
+  ?ConvertToEagerTensor@tensorflow@@YAPEAUTFE_TensorHandle@@PEAUTFE_Context@@PEAU_object@@W4DataType@1@PEBD@Z
+  ?MaybeRaiseExceptionFromTFStatus@tensorflow@@YAHPEAUTSL_Status@@PEAU_object@@@Z
+  ?EagerTensorFromHandle@@YAPEAU_object@@PEAUTFE_TensorHandle@@_N@Z
+  ?IsResourceVariable@swig@tensorflow@@YA_NPEAU_object@@@Z
+;_pywrap_tf_session
+  ?ImportNumpy@tsl@@YAXXZ
+  ?TF_NewSessionRef@tensorflow@@YAPEAUTF_Session@@PEAUTF_Graph@@PEBUTF_SessionOptions@@PEAUTSL_Status@@@Z
+  ?TF_SessionMakeCallable@tensorflow@@YAXPEAUTF_Session@@PEBUTF_Buffer@@PEA_JPEAUTSL_Status@@@Z
+  ?TF_SessionRunCallable@tensorflow@@YAXPEAUTF_Session@@_JPEAU_object@@PEAV?$InlinedVector@PEAU_object@@$07V?$allocator@PEAU_object@@@std@@@lts_20230802@absl@@PEAUTF_Buffer@@PEAUTSL_Status@@@Z
+  ?TF_SessionReleaseCallable@tensorflow@@YAXPEAUTF_Session@@_JPEAUTSL_Status@@@Z
+  ?TF_Reset_wrapper@tensorflow@@YAXPEBUTF_SessionOptions@@AEBV?$InlinedVector@PEBD$07V?$allocator@PEBD@std@@@lts_20230802@absl@@PEAUTSL_Status@@@Z
+  ?EqualGraphDefWrapper@tensorflow@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV23@0@Z
+  ?EqualAttrValueWrapper@tensorflow@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV23@0@Z
+  ?TF_GraphGetTensorShapeHelper@tensorflow@@YA?AV?$InlinedVector@_J$05V?$allocator@_J@std@@@lts_20230802@absl@@PEAUTF_Graph@@UTF_Output@@PEAUTSL_Status@@PEA_N@Z
+  ?TF_SessionRun_wrapper@tensorflow@@YAXPEAUTF_Session@@PEBUTF_Buffer@@AEBV?$vector@UTF_Output@@V?$allocator@UTF_Output@@@std@@@std@@AEBV?$vector@PEAU_object@@V?$allocator@PEAU_object@@@std@@@5@2AEBV?$vector@PEAUTF_Operation@@V?$allocator@PEAUTF_Operation@@@std@@@5@PEAU3@PEAUTSL_Status@@PEAV65@@Z
+  ?TF_SessionPRunSetup_wrapper@tensorflow@@YAXPEAUTF_Session@@AEBV?$vector@UTF_Output@@V?$allocator@UTF_Output@@@std@@@std@@1AEBV?$vector@PEAUTF_Operation@@V?$allocator@PEAUTF_Operation@@@std@@@4@PEAPEBDPEAUTSL_Status@@@Z
+  ?TF_SessionPRun_wrapper@tensorflow@@YAXPEAUTF_Session@@PEBDAEBV?$vector@UTF_Output@@V?$allocator@UTF_Output@@@std@@@std@@AEBV?$vector@PEAU_object@@V?$allocator@PEAU_object@@@std@@@4@2PEAUTSL_Status@@PEAV54@@Z
+  ?GetOperationInputs@tensorflow@@YA?AV?$vector@UTF_Output@@V?$allocator@UTF_Output@@@std@@@std@@PEAUTF_Operation@@@Z
+  ?TF_OperationGetControlOutputs_wrapper@tensorflow@@YA?AV?$vector@PEAUTF_Operation@@V?$allocator@PEAUTF_Operation@@@std@@@std@@PEAUTF_Operation@@@Z
+  ?TF_GraphToFunction_wrapper@tensorflow@@YAPEAUTF_Function@@PEBUTF_Graph@@PEBD_NPEBV?$vector@PEAUTF_Operation@@V?$allocator@PEAUTF_Operation@@@std@@@std@@AEBV?$vector@UTF_Output@@V?$allocator@UTF_Output@@@std@@@5@4AEBV?$InlinedVector@PEBD$07V?$allocator@PEBD@std@@@lts_20230802@absl@@35PEBUTF_FunctionOptions@@1PEAUTSL_Status@@@Z
+  ?TF_GraphSetOutputHandleShapesAndTypes_wrapper@tensorflow@@YAXPEAUTF_Graph@@UTF_Output@@AEBV?$vector@V?$vector@_JV?$allocator@_J@std@@@std@@V?$allocator@V?$vector@_JV?$allocator@_J@std@@@std@@@2@@std@@AEBV?$vector@HV?$allocator@H@std@@@5@AEBV?$vector@W4TF_DataType@@V?$allocator@W4TF_DataType@@@std@@@5@PEAUTSL_Status@@@Z
+  ?TF_CreatePlaceholders@tensorflow@@YA?AV?$vector@UTF_Output@@V?$allocator@UTF_Output@@@std@@@std@@PEAUTF_Graph@@PEAU_object@@PEBDPEAUTSL_Status@@@Z
+  ?TF_GraphSetTensorShape_wrapper@tensorflow@@YAXPEAUTF_Graph@@UTF_Output@@AEBV?$vector@_JV?$allocator@_J@std@@@std@@_NPEAUTSL_Status@@@Z
+  ?TF_ImportGraphDefResultsMissingUnusedInputMappings_wrapper@tensorflow@@YA?AV?$vector@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$allocator@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@@std@@PEAUTF_ImportGraphDefResults@@@Z
+  ?TF_TryEvaluateConstant_wrapper@tensorflow@@YAPEAU_object@@PEAUTF_Graph@@UTF_Output@@PEAUTSL_Status@@@Z
+  ?Lookup@PyExceptionRegistry@tensorflow@@SAPEAU_object@@W4TSL_Code@@@Z
+;xla_ops
+;custom ops
