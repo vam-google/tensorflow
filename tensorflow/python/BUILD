@@ -1015,7 +1015,7 @@ pybind_extension(
         "@pybind11_protobuf//pybind11_protobuf:native_proto_caster",
         # Otherwise Python does not understand that layout_proto.pb2.py
         # is the same type as in layout_proto_cc - WHY???
-        "//tensorflow/dtensor/proto:layout_proto_cc",
+#        "//tensorflow/dtensor/proto:layout_proto_cc",
     ]
 )
 
@@ -1133,6 +1133,7 @@ pywrap_library(
         "//tensorflow/python/framework/experimental:_math_ops",
         "//tensorflow/python/framework/experimental:_nn_ops",
         "//tensorflow/python/framework/experimental:_tape",
+        "//tensorflow/python/util:_pywrap_transform_graph",
     ],
     linkopts = select({
         "//tensorflow:windows": [
@@ -1187,6 +1188,7 @@ pybind_extension(
     name = "_pywrap_tensorflow_cc_only",
     deps = [
 #        "//tensorflow/core:framework_internal",
+        ":_protobuf_inline_symbols_enforcer",
         "//tensorflow/dtensor/cc:tensor_layout",
         "//tensorflow/compiler/mlir/tensorflow/c:mlir_c_api_registration",
         "//tensorflow/distribute/experimental/rpc/kernels:rpc_ops",
@@ -1197,6 +1199,20 @@ pybind_extension(
         "//tensorflow/core/kernels:reader_ops",
         "@local_xla//xla/backends/profiler/cpu:python_tracer",
     ]
+)
+
+cc_library(
+    name = "_protobuf_inline_symbols_enforcer",
+    srcs = ["protobuf_inline_symbols_enforcer.cc"],
+    deps = [
+        "//tensorflow/compiler/mlir/quantization/tensorflow:exported_model_proto_cc",
+        "//tensorflow/core/framework:attr_value_proto_cc",
+        "//tensorflow/core/framework:function_proto_cc",
+        "//tensorflow/core/framework:graph_proto_cc",
+        "//tensorflow/core/protobuf:for_core_protos_cc",
+        "//tensorflow/dtensor/proto:layout_proto_cc",
+        "@local_tsl//tsl/profiler/protobuf:xplane_proto_cc",
+    ],
 )
 
 pywrap_common_library(

@@ -136,6 +136,9 @@ pybind_extension(
         "//tensorflow/python/lib/core:pybind11_status",
         "@com_google_absl//absl/types:variant",
     ],
+    private_deps = [
+        "@com_google_absl//absl/container:flat_hash_map",
+    ],
 )
 
 cc_library(

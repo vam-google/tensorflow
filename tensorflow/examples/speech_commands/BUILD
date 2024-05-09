@@ -250,6 +250,7 @@ tf_py_strict_test(
         "v1only",  # uses contrib
     ],
     deps = [
+        ":input_data",
         ":wav_to_features_main_lib",
         "//tensorflow:tensorflow_py_no_contrib",
         "//tensorflow/python/framework:test_lib",

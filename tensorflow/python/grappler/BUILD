@@ -123,6 +123,9 @@ pybind_extension(
         "//tensorflow/core/common_runtime/gpu:gpu_id",
         "//tensorflow/python/lib/core:pybind11_status",
     ] + if_not_windows(["//tensorflow/core/grappler/costs:graph_properties"]),  # b/148556093,
+    private_deps = [
+        "@com_google_absl//absl/container:flat_hash_map",
+    ],
 )
 
 tf_py_strict_test(
@@ -257,17 +260,17 @@ pybind_extension(
     name = "_pywrap_tf_optimizer",
     srcs = [
         "tf_optimizer_wrapper.cc",
-        "//tensorflow/cc:pywrap_required_hdrs",
-        "//tensorflow/core/grappler:pywrap_required_hdrs",
-        "//tensorflow/core/grappler/clusters:pywrap_required_hdrs",
-        "//tensorflow/core/grappler/costs:pywrap_required_hdrs",
-        "//tensorflow/core/grappler/optimizers:pywrap_required_hdrs",
-        "//tensorflow/core/grappler/verifiers:pywrap_required_hdrs",
     ],
     data = [
         "_pywrap_tf_optimizer.pyi",
     ],
     deps = [
+        "//tensorflow/core/grappler/clusters:cluster",
+        "//tensorflow/core/grappler/clusters:utils",
+        "//tensorflow/core/grappler:grappler_item_builder",
+        "//tensorflow/core/grappler/optimizers:meta_optimizer",
+        "//tensorflow/core/grappler/optimizers:graph_optimizer",
+        "//tensorflow/core/grappler/verifiers:graph_verifier",
         "//tensorflow/core:framework",
         "//tensorflow/core/framework:reader_base",
         "//tensorflow/core:lib_headers_for_pybind",

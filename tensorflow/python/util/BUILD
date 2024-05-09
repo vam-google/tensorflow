@@ -219,12 +219,12 @@ pybind_extension(
     name = "_pywrap_transform_graph",
     srcs = [
         "transform_graph_wrapper.cc",
-        "//tensorflow/tools/graph_transforms:transform_graph_hdrs"
     ],
     data = [
         "_pywrap_transform_graph.pyi",
     ],
     deps = [
+        "//tensorflow/tools/graph_transforms:transform_graph_lib",
         "//tensorflow/core:framework",
         "//tensorflow/core/framework:reader_base",
         "//tensorflow/core:lib_headers_for_pybind",

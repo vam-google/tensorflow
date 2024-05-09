@@ -674,9 +674,11 @@ pybind_extension(
         "//tensorflow/python/lib/core:safe_pyobject_ptr",
         "//third_party/python_runtime:headers",
         "@com_google_absl//absl/algorithm:container",
+        "@com_google_absl//absl/strings",
+    ],
+    private_deps = [
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
-        "@com_google_absl//absl/strings",
     ],
 )
 
