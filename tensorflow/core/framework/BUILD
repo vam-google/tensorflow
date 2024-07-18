@@ -1569,6 +1569,7 @@ tf_proto_library(
         ":types_proto",
         ":versions_proto",
     ],
+    visibility = ["//visibility:public"],
 )
 
 tf_proto_library(
@@ -1784,6 +1785,7 @@ tf_proto_library(
     srcs = ["types.proto"],
     cc_api_version = 2,
     make_default_target_header_only = True,
+    visibility = ["//visibility:public"],
 )
 
 tf_jspb_proto_library(
@@ -1824,6 +1826,7 @@ tf_proto_library(
         ":tensor_shape_proto",
         ":types_proto",
     ],
+    visibility = ["//tensorflow/python:__pkg__"],
 )
 
 # copybara:uncomment_begin(google-only)

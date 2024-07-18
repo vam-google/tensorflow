@@ -27,8 +27,6 @@
 # Other build options:
 #     short_logs:       Only log errors during build, skip warnings.
 #     verbose_logs:     Show all compiler warnings during build.
-#     monolithic:       Build all TF C++ code into a single shared object.
-#     dynamic_kernels:  Try to link all kernels dynamically (experimental).
 #     dbg:              Build with debug info
 #
 # TF version options;
@@ -71,12 +69,6 @@
 #     release_cpu_windows:             Toolchain and CUDA options for Windows CPU builds.
 
 # Default build options. These are applied first and unconditionally.
-
-# For projects which use TensorFlow as part of a Bazel build process, putting
-# nothing in a bazelrc will default to a monolithic build. The following line
-# opts in to modular op registration support by default.
-build --define framework_shared_object=true
-build --define tsl_protobuf_header_only=true
 
 build --define=use_fast_cpp_protos=true
 build --define=allow_oversize_protos=true
@@ -188,14 +180,6 @@ build:ios_x86_64 --cpu=ios_x86_64
 build:ios_fat --config=ios
 build:ios_fat --ios_multi_cpus=armv7,arm64,i386,x86_64
 
-# Config to use a mostly-static build and disable modular op registration
-# support (this will revert to loading TensorFlow with RTLD_GLOBAL in Python).
-# By default, TensorFlow will build with a dependence on
-# //tensorflow:libtensorflow_framework.so.
-build:monolithic --define framework_shared_object=false
-build:monolithic --define tsl_protobuf_header_only=false
-build:monolithic --experimental_link_static_libraries_once=false  # b/229868128
-
 # Please note that MKL on MacOS is still not supported.
 # If you would like to use a local MKL instead of downloading, please set the
 # environment variable "TF_MKL_ROOT" every time before build.
@@ -279,7 +263,6 @@ build:dbg --copt -DDEBUG_BUILD
 
 # Config to build TF TPU
 build:tpu --define=with_tpu_support=true
-build:tpu --define=framework_shared_object=true
 build:tpu --copt=-DLIBTPU_ON_GCE
 build:tpu --define=enable_mlir_bridge=true
 
@@ -300,10 +283,6 @@ build:noaws --define=no_aws_support=true
 build:nogcp --define=no_gcp_support=true
 build:nohdfs --define=no_hdfs_support=true
 build:nonccl --define=no_nccl_support=true
-
-# Modular TF build options
-build:dynamic_kernels --define=dynamic_loaded_kernels=true
-build:dynamic_kernels --copt=-DAUTOLOAD_DYNAMIC_KERNELS
 
 # Don't trigger --config=<host platform> when cross-compiling.
 build:android --noenable_platform_specific_config
@@ -388,12 +367,6 @@ build:macos --cxxopt=-std=c++17
 build:macos --host_cxxopt=-std=c++17
 build:windows --cxxopt=/std:c++17
 build:windows --host_cxxopt=/std:c++17
-
-# On windows, we still link everything into a single DLL.
-build:windows --config=monolithic
-
-# On linux, we dynamically link small amount of kernels
-build:linux --config=dynamic_kernels
 
 # Make sure to include as little of windows.h as possible
 build:windows --copt=-DWIN32_LEAN_AND_MEAN
@@ -552,28 +525,41 @@ build:rbe_linux_cuda --repo_env=TF_NCCL_CONFIG_REPO="@sigbuild-r2.17-clang_confi
 test:rbe_linux_cuda --test_env=LD_LIBRARY_PATH="/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64"
 
 build:rbe_linux_cuda_nvcc --config=rbe_linux_cuda
-build:rbe_linux_cuda_nvcc --config=nvcc_clang
 build:rbe_linux_cuda_nvcc --repo_env TF_NCCL_USE_STUB=1
+build:rbe_linux_cuda_nvcc --action_env=TF_NVCC_CLANG="1"
 
-build:rbe_win_base --config=rbe_base
-build:rbe_win_base --shell_executable=C:\\tools\\msys64\\usr\\bin\\bash.exe
-build:rbe_win_base --remote_instance_name=projects/tensorflow-testing/instances/windows
+# TODO(kanglan): Remove rbe_win and rbe_win_py3* after b/289091160 is fixed
+build:rbe_win --config=rbe_base
+build:rbe_win --crosstool_top="//tensorflow/tools/toolchains/win/tf_win_05022023:toolchain"
+build:rbe_win --extra_toolchains="//tensorflow/tools/toolchains/win/tf_win_05022023:cc-toolchain-x64_windows"
+build:rbe_win --extra_execution_platforms="//tensorflow/tools/toolchains/win:rbe_windows_ltsc2019"
+build:rbe_win --host_platform="//tensorflow/tools/toolchains/win:rbe_windows_ltsc2019"
+build:rbe_win --platforms="//tensorflow/tools/toolchains/win:rbe_windows_ltsc2019"
+build:rbe_win --shell_executable=C:\\tools\\msys64\\usr\\bin\\bash.exe
+build:rbe_win --experimental_strict_action_env=true
+
+# TODO(gunan): Remove once we use MSVC 2019 with latest patches.
+build:rbe_win --define=override_eigen_strong_inline=true
+
 # Don't build the python zip archive in the RBE build.
-build:rbe_win_base --remote_download_minimal
-build:rbe_win_base --enable_runfiles
-build:rbe_win_base --nobuild_python_zip
-build:rbe_win_base --define=override_eigen_strong_inline=true
+build:rbe_win --remote_download_minimal
+build:rbe_win --enable_runfiles
+build:rbe_win --nobuild_python_zip
 
-build:rbe_win_clang --config=rbe_win_base
-build:rbe_win_clang --crosstool_top="//tensorflow/tools/toolchains/win/20240424:toolchain"
-build:rbe_win_clang --extra_toolchains="//tensorflow/tools/toolchains/win/20240424:cc-toolchain-x64_windows-clang-cl"
-build:rbe_win_clang --extra_execution_platforms="//tensorflow/tools/toolchains/win:x64_windows-clang-cl"
-build:rbe_win_clang --host_platform="//tensorflow/tools/toolchains/win:x64_windows-clang-cl"
-build:rbe_win_clang --platforms="//tensorflow/tools/toolchains/win:x64_windows-clang-cl"
-build:rbe_win_clang --compiler=clang-cl
-build:rbe_win_clang --linkopt=/FORCE:MULTIPLE
-build:rbe_win_clang --host_linkopt=/FORCE:MULTIPLE
+build:rbe_win_py38 --config=rbe_base
+build:rbe_win_py38 --repo_env=PYTHON_BIN_PATH=C:\\Python38\\python.exe
+build:rbe_win_py38 --repo_env=PYTHON_LIB_PATH=C:\\Python38\\lib\\site-packages
+build:rbe_win_py38 --repo_env=TF_PYTHON_CONFIG_REPO=//tensorflow/tools/toolchains/win_1803/py38
+build:rbe_win_py38 --python_path=C:\\Python38\\python.exe
 
+build:rbe_win_py39 --config=rbe_base
+build:rbe_win_py39 --repo_env=PYTHON_BIN_PATH=C:\\Python39\\python.exe
+build:rbe_win_py39 --repo_env=PYTHON_LIB_PATH=C:\\Python39\\lib\\site-packages
+build:rbe_win_py39 --repo_env=TF_PYTHON_CONFIG_REPO=//tensorflow/tools/toolchains/win_1803/py39
+build:rbe_win_py39 --python_path=C:\\Python39\\python.exe
+
+# TODO(kanglan): Merge tensorflow_testing_rbe_win into rbe_win
+common:tensorflow_testing_rbe_win --remote_instance_name=projects/tensorflow-testing/instances/windows
 # END TF REMOTE BUILD EXECUTION OPTIONS
 
 # TFLite build configs for generic embedded Linux
@@ -589,7 +575,6 @@ build:elinux_armhf --copt -mfp16-format=ieee
 
 # Load rc file written by ./configure.
 try-import %workspace%/.tf_configure.bazelrc
-try-import %workspace%/xla_configure.bazelrc
 
 # Load rc file with user-specific options.
 try-import %workspace%/.bazelrc.user
@@ -598,13 +583,10 @@ try-import %workspace%/.bazelrc.user
 # Build TensorFlow v2.
 test:release_base --test_size_filters=small,medium
 
-# Enable support for all targets
-build:release_base --config=cpu_cross
+# Target the AVX instruction set
+build:release_linux_base --config=avx_linux
 
-# Ensure release_base is set on linux
-build:release_linux_base --config=release_base
-
-# Disable clang extension that rejects type definitions within offsetof.
+# Disable clang extention that rejects type definitions within offsetof.
 # This was added in clang-16 by https://reviews.llvm.org/D133574.
 # Can be removed once upb is updated, since a type definition is used within
 # offset of in the current version of ubp.
@@ -626,8 +608,8 @@ build:release_linux_base --action_env PYTHON_BIN_PATH="/usr/bin/python3"
 build:release_linux_base --action_env PYTHON_LIB_PATH="/usr/lib/tf_python"
 build:release_linux_base --python_path="/usr/bin/python3"
 # Set Clang as compiler. Use the actual path to clang installed in container.
-build:release_cpu_linux_base --repo_env=CC="/usr/lib/llvm-18/bin/clang"
-build:release_cpu_linux_base --repo_env=BAZEL_COMPILER="/usr/lib/llvm-18/bin/clang"
+build:release_cpu_linux_base --repo_env=CC="/usr/lib/llvm-17/bin/clang"
+build:release_cpu_linux_base --repo_env=BAZEL_COMPILER="/usr/lib/llvm-17/bin/clang"
 # Test-related settings below this point.
 test:release_linux_base --build_tests_only --keep_going --test_output=errors --verbose_failures=true
 test:release_linux_base --local_test_jobs=HOST_CPUS
@@ -637,9 +619,7 @@ test:release_linux_base --test_summary=short
 
 # Use the Clang toolchain to compile
 build:release_cpu_linux --config=release_linux_base
-build:release_cpu_linux --crosstool_top="@sigbuild-r2.17-clang_config_cuda//crosstool:toolchain"
-# Target the AVX instruction set
-build:release_cpu_linux --config=avx_linux
+build:release_cpu_linux --crosstool_top="@sigbuild-r2.16-clang_config_cuda//crosstool:toolchain"
 
 build:release_gpu_linux --config=release_cpu_linux
 # Set up compilation CUDA version and paths and use the CUDA Clang toolchain.
@@ -935,3 +915,37 @@ test:rbe_cross_compile_macos_x86 --jobs=100
 
 # Try to load the XLA warnings config if available
 try-import %workspace%/warnings.bazelrc
+
+
+test:pycpp_filters --test_tag_filters=-no_oss,-oss_excluded,-oss_serial,-gpu,-tpu,-benchmark-test,-v1only
+test:pycpp_filters --build_tag_filters=-no_oss,-oss_excluded,-oss_serial,-gpu,-tpu,-benchmark-test,-v1only
+test:pycpp_filters --test_lang_filters=cc,py --test_size_filters=small,medium
+build:pycpp_filters --test_tag_filters=-no_oss,-oss_excluded,-oss_serial,-gpu,-tpu,-benchmark-test,-v1only
+build:pycpp_filters --build_tag_filters=-no_oss,-oss_excluded,-oss_serial,-gpu,-tpu,-benchmark-test,-v1only
+build:pycpp_filters --test_lang_filters=cc,py --test_size_filters=small,medium
+# build:pycpp_filters --deleted_packages=tensorflow/python/integration_testing,tensorflow/compiler/tf2tensorrt,tensorflow/compiler/xrt,tensorflow/core/tpu,tensorflow/lite
+
+test:pycpp --config=pycpp_filters -- //tensorflow/... -//tensorflow/python/integration_testing/... -//tensorflow/compiler/tf2tensorrt/... -//tensorflow/compiler/xrt/... -//tensorflow/core/tpu/... -//tensorflow/lite/... -//tensorflow/tools/toolchains/...
+
+build --config=pycpp_filters
+build --experimental_convenience_symlinks=clean
+
+build:pycpp_filters_win --nodistinct_host_configuration
+build:pycpp_filters_win --dynamic_mode=off
+build:pycpp_filters_win --config=xla
+build:pycpp_filters_win --config=short_logs
+build:pycpp_filters_win --announce_rc
+build:pycpp_filters_win --build_tag_filters=-no_windows,-no_oss
+
+build:pycpp_filters_win --keep_going
+build:pycpp_filters_win --verbose_failures
+build:pycpp_filters_win --copt=/d2ReducedOptimizeHugeFunctions
+build:pycpp_filters_win --host_copt=/d2ReducedOptimizeHugeFunctions
+build:pycpp_filters_win --enable_runfiles
+build:pycpp_filters_win --test_timeout="300,450,1200,3600"
+test:pycpp_filters_win --flaky_test_attempts=1
+build:pycpp_filters_win --nobuild_python_zip
+test:pycpp_filters_win --test_tag_filters=-no_windows,-no_oss,-gpu,-tpu
+
+#build --config=pycpp_filters_win
+#test --config=pycpp_filters_win

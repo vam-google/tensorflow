@@ -76,7 +76,7 @@ cc_library(
     hdrs = ["remote_profiler_session_manager.h"],
     copts = tf_profiler_copts(),
     deps = [
-        ":profiler_client_for_pybind",
+        ":profiler_client",
         "//tensorflow/core:lib",
         "@com_google_absl//absl/strings",
         "@local_tsl//tsl/profiler/rpc/client:remote_profiler_session_manager",

@@ -34,9 +34,9 @@ tf_py_strict_test(
 )
 
 tf_py_strict_test(
-    name = "coordinated_read_ft_test",
+    name = "coord_read_ft_test",
     size = "medium",
-    srcs = ["coordinated_read_ft_test.py"],
+    srcs = ["coord_read_ft_test.py"],
     shard_count = 8,
     deps = [
         ":test_base",
@@ -189,9 +189,9 @@ tf_py_strict_test(
 )
 
 tf_py_strict_test(
-    name = "cross_trainer_cache_test",
+    name = "cross_trainer_test",
     size = "medium",
-    srcs = ["cross_trainer_cache_test.py"],
+    srcs = ["cross_trainer_test.py"],
     shard_count = 8,
     deps = [
         ":test_base",
@@ -206,9 +206,9 @@ tf_py_strict_test(
 )
 
 tf_py_strict_test(
-    name = "cross_trainer_cache_ft_test",
+    name = "cross_trainer_ft_test",
     size = "medium",
-    srcs = ["cross_trainer_cache_ft_test.py"],
+    srcs = ["cross_trainer_ft_test.py"],
     shard_count = 4,
     deps = [
         ":test_base",
@@ -300,9 +300,9 @@ tf_py_strict_test(
 )
 
 tf_py_strict_test(
-    name = "distributed_save_ft_test",
+    name = "distrib_save_ft_test",
     size = "medium",
-    srcs = ["distributed_save_ft_test.py"],
+    srcs = ["distrib_save_ft_test.py"],
     # copybara:uncomment_begin(google-only)
     # exec_properties = select({
     # "//tools/cpp:msan_build": {"mem": "20g"},
@@ -359,9 +359,9 @@ py_strict_library(
 )
 
 tf_py_strict_test(
-    name = "multi_process_cluster_test",
+    name = "multi_proc_clstr_test",
     size = "medium",
-    srcs = ["multi_process_cluster_test.py"],
+    srcs = ["multi_proc_clstr_test.py"],
     shard_count = 3,
     deps = [
         ":multi_process_cluster",

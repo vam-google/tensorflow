@@ -239,7 +239,8 @@ cc_library(
     deps = [
         ":platform",
         ":types",
-    ] + tsl_protobuf_deps(),
+        "@com_google_protobuf//:protobuf",
+    ],
 )
 
 cc_library(

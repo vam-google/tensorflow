@@ -1,4 +1,5 @@
 load("//tensorflow:tensorflow.default.bzl", "tf_py_strict_test", "tf_python_pybind_extension")
+load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -64,12 +65,10 @@ cc_library(
     ],
 )
 
-tf_python_pybind_extension(
+pybind_extension(
     name = "_pywrap_saved_model",
     srcs = ["saved_model_load_and_run_wrapper.cc"],
-    enable_stub_generation = True,
-    module_name = "_pywrap_saved_model",
-    pytype_srcs = [
+    data = [
         "_pywrap_saved_model.pyi",
     ],
     deps = [
@@ -79,7 +78,8 @@ tf_python_pybind_extension(
         "//tensorflow/core/tfrt/saved_model:saved_model_cpu",
         "//tensorflow/python/lib/core:pybind11_lib",
         "@com_google_absl//absl/strings:string_view",
-        "@pybind11",
-        "@pybind11_abseil//pybind11_abseil:status_casters",
     ],
+    private_deps = [
+        "@pybind11_abseil//pybind11_abseil:status_casters",
+    ]
 )
