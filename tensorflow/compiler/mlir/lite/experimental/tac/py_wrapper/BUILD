@@ -1,5 +1,5 @@
 load("//tensorflow:tensorflow.bzl", "VERSION")
-load("//tensorflow:tensorflow.default.bzl", "pybind_extension")
+load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -31,16 +31,14 @@ pybind_extension(
     name = "_pywrap_tac_wrapper",
     srcs = [
         "tac_wrapper_pybind11.cc",
+        "tac_wrapper.h",
     ],
-    hdrs = ["tac_wrapper.h"],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_pywrap_tac_wrapper.pyi",
     ],
     deps = [
         ":tac_wrapper_lib",
         "//tensorflow/python/lib/core:pybind11_lib",
         "//third_party/python_runtime:headers",
-        "@pybind11",
     ],
 )

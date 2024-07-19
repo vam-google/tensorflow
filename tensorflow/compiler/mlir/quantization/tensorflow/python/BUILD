@@ -3,7 +3,6 @@ load(
     "//tensorflow:tensorflow.default.bzl",
     "get_compatible_with_portable",
     "tf_py_strict_test",
-    "tf_python_pybind_extension",
 )
 load(
     "//tensorflow/core/platform:build_config_root.bzl",
@@ -160,7 +159,6 @@ cc_library(
         "@com_google_absl//absl/strings:str_format",
         "@com_google_absl//absl/strings:string_view",
         "@local_tsl//tsl/platform:protobuf",
-        "@pybind11",
         "@pybind11_abseil//pybind11_abseil:absl_casters",
     ],
 )

@@ -1,5 +1,4 @@
 load("//tensorflow:pytype.default.bzl", "pytype_strict_library")
-load("//tensorflow:tensorflow.default.bzl", "tf_python_pybind_extension")
 load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
 
 visibility = ["//tensorflow/core/function:__subpackages__"]

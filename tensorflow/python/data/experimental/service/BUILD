@@ -1,5 +1,5 @@
 load("//tensorflow:strict.default.bzl", "py_strict_library")
-load("//tensorflow:tensorflow.default.bzl", "tf_py_strict_test", "tf_python_pybind_extension")
+load("//tensorflow:tensorflow.default.bzl", "tf_py_strict_test")
 load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
 
 package(

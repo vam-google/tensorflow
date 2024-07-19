@@ -1,6 +1,6 @@
 # python/lib/core package
 
-load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable", "tf_external_workspace_visible", "tf_python_pybind_extension")
+load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable", "tf_external_workspace_visible")
 load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
 
 visibility = [
@@ -65,7 +65,6 @@ cc_library(
     visibility = tf_external_workspace_visible(visibility),
     deps = [
         "//tensorflow/core/platform:stringpiece",
-        "@pybind11",
     ],
 )
 
@@ -76,7 +75,6 @@ cc_library(
     features = ["-parse_headers"],
     visibility = tf_external_workspace_visible(visibility),
     deps = [
-        "@pybind11",
     ],
 )
 
@@ -97,7 +95,6 @@ cc_library(
         "//tensorflow/core:protos_all_cc",
         "//tensorflow/core/common_runtime:core_cpu_lib",
         "//third_party/python_runtime:headers",
-        "@pybind11",
     ],
 )
 
@@ -122,7 +119,6 @@ cc_library(
     visibility = tf_external_workspace_visible(visibility),
     deps = [
         "@com_google_absl//absl/strings",
-        "@pybind11",
     ],
 )
 

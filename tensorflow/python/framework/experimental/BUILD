@@ -1,7 +1,7 @@
 # Experimental Unified APIs for Eager and Graph modes.
 
 load("//tensorflow:strict.default.bzl", "py_strict_library")
-load("//tensorflow:tensorflow.default.bzl", "cuda_py_strict_test", "tf_python_pybind_extension")
+load("//tensorflow:tensorflow.default.bzl", "cuda_py_strict_test")
 load(
     "//tensorflow/tools/test:performance.bzl",
     "cuda_py_benchmark_test",

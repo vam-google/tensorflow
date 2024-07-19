@@ -3,7 +3,6 @@ load(
     "//tensorflow:tensorflow.default.bzl",
     "get_compatible_with_portable",
     "tf_py_strict_test",
-    "tf_python_pybind_extension",
 )
 load("//tensorflow/compiler/mlir/quantization/stablehlo:internal_visibility_allowlist.bzl", "internal_visibility_allowlist")
 load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")

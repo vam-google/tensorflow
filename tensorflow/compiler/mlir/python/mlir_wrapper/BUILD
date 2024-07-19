@@ -1,4 +1,3 @@
-load("//tensorflow:tensorflow.default.bzl", "tf_python_pybind_extension")
 load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
 
 package(

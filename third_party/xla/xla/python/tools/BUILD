@@ -3,7 +3,6 @@
 # We must instead use `tsl_pybind_extension` and `py_strict_test`.
 load("//xla:pytype.default.bzl", "pytype_strict_library")
 load("//xla:strict.default.bzl", "py_strict_test")
-load("//xla/tsl:tsl.default.bzl", "tsl_pybind_extension")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -54,7 +53,9 @@ tsl_pybind_extension(
     name = "_types",
     srcs = ["_types.cc"],
     pytype_deps = ["//third_party/py/numpy"],
-    pytype_srcs = ["_types.pyi"],
+    data = [
+        "_types.pyi"
+    ],
     # Users should depend on ":types" instead.
     visibility = ["//visibility:private"],
     deps = [

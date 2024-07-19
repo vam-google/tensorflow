@@ -5,7 +5,6 @@ load(
     "tf_cc_test",
     "tf_features_nolayering_check_if_ios",
 )
-load("//tensorflow:tensorflow.default.bzl", "pybind_extension")
 load(
     "//tensorflow/lite:build_def.bzl",
     "tflite_custom_android_library",

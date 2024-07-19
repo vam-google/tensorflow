@@ -1,6 +1,6 @@
 load("//tensorflow:strict.default.bzl", "py_strict_library")
-load("//tensorflow:tensorflow.default.bzl", "tf_python_pybind_extension")
 load("//tensorflow/core/platform:rules_cc.bzl", "cc_library")
+load("//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 licenses(["notice"])
 
@@ -240,20 +240,18 @@ cc_library(
     alwayslink = True,
 )
 
-tf_python_pybind_extension(
+pybind_extension(
     name = "_pywrap_converter_api",
     srcs = [
         "converter_python_api_wrapper.cc",
+        ":converter_python_api_hdrs",
     ],
-    hdrs = [":converter_python_api_hdrs"],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_pywrap_converter_api.pyi",
     ],
     deps = [
         "//tensorflow/compiler/mlir/quantization/tensorflow/python:py_function_lib",
         "//tensorflow/python/lib/core:pybind11_lib",
         "//third_party/python_runtime:headers",
-        "@pybind11",
     ],
 )

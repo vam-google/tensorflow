@@ -1,6 +1,5 @@
 # This package loads pybind11 dependencies to ensure compatibility with Python API.
 # Files affected: graph_execution_options
-load("//tensorflow:tensorflow.default.bzl", "tf_python_pybind_extension")
 load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
 
 package(

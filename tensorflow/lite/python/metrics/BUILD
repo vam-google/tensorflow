@@ -1,6 +1,6 @@
 load("//tensorflow:pytype.default.bzl", "pytype_strict_library")
 load("//tensorflow:strict.default.bzl", "py_strict_test")
-load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable", "if_portable", "pybind_extension")
+load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable", "if_portable")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],

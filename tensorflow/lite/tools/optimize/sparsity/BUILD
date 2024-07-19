@@ -1,5 +1,4 @@
 load("//tensorflow:strict.default.bzl", "py_strict_test")
-load("//tensorflow:tensorflow.default.bzl", "pybind_extension")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -25,7 +24,6 @@ pybind_extension(
         "//tensorflow/lite/core/c:common",
         "//tensorflow/lite/kernels/internal/utils:sparsity_format_converter",
         "//third_party/python_runtime:headers",  # buildcleaner: keep
-        "@pybind11",
     ],
 )
 

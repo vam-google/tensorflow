@@ -20,7 +20,7 @@ load(
     "if_google",
     "internal_visibility",
 )
-load("//xla/tsl:tsl.default.bzl", "get_compatible_with_portable", "tsl_pybind_extension")
+load("//xla/tsl:tsl.default.bzl", "get_compatible_with_portable")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -164,7 +164,7 @@ py_strict_test(
     ) + xla_py_test_deps(),
 )
 
-tsl_pybind_extension(
+pybind_extension(
     name = "status_casters_ext",
     srcs = ["status_casters_ext.cc"],
     visibility = ["//visibility:private"],

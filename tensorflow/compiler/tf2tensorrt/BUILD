@@ -20,7 +20,7 @@ load(
     "tf_custom_op_library_additional_deps",
     "tf_gen_op_wrapper_py",
 )
-load("//tensorflow:tensorflow.default.bzl", "pybind_extension", "tf_cuda_cc_test", "tf_custom_op_py_strict_library", "tf_gen_op_libs")
+load("//tensorflow:tensorflow.default.bzl", "tf_cuda_cc_test", "tf_custom_op_py_strict_library", "tf_gen_op_libs")
 load(
     "//tensorflow/core/platform:build_config.bzl",
     "tf_additional_all_protos",
@@ -33,6 +33,7 @@ load(
     "if_static",
 )
 load("//tensorflow/core/platform:rules_cc.bzl", "cc_library")
+load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -1053,8 +1054,7 @@ tf_cuda_library(
 pybind_extension(
     name = "_pywrap_py_utils",
     srcs = ["utils/py_utils_wrapper.cc"],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_pywrap_py_utils.pyi",
     ],
     deps = [
@@ -1064,7 +1064,6 @@ pybind_extension(
         "//tensorflow/core/platform:logging",
         "//tensorflow/core/platform:status",
         "@local_xla//xla/stream_executor",
-        "@pybind11",
     ],
 )
 

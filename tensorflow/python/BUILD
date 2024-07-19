@@ -12,7 +12,7 @@ load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library", "pywrap_
 
 # Placeholder: load py_proto_library
 load("//tensorflow:tensorflow.bzl", "VERSION", "cc_header_only_library", "clean_dep", "if_google", "if_oss", "if_windows", "if_xla_available", "tf_enable_mlir_bridge", "tsl_async_value_deps")
-load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable", "pywrap_tensorflow_macro", "tf_external_workspace_visible", "tf_monitoring_python_deps", "tf_pybind_cc_library_wrapper", "tf_python_pybind_extension")
+load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable", "pywrap_tensorflow_macro", "tf_external_workspace_visible", "tf_monitoring_python_deps", "tf_pybind_cc_library_wrapper")
 load(
     "//tensorflow/core/platform:build_config.bzl",
     "tf_additional_binary_deps",
