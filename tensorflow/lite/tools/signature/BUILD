@@ -4,6 +4,8 @@ load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable", "rep
 # Utilities for signature_defs in TFLite
 load("//tensorflow/lite:build_def.bzl", "tflite_copts")
 load("//tensorflow/lite:special_rules.bzl", "tflite_portable_test_suite")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
+
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -83,7 +85,6 @@ pybind_extension(
         "//tensorflow/lite/core:framework",
         "//tensorflow/python/lib/core:pybind11_lib",
         "@com_google_absl//absl/status",
-        "@pybind11",
     ],
 )
 

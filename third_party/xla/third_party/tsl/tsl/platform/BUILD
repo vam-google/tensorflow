@@ -34,7 +34,6 @@ load(
     "tf_windows_aware_platform_deps",
     "tsl_cc_test",
     "tsl_grpc_credentials_deps",
-    "tsl_protobuf_deps",
 )
 load("//tsl/platform:build_config_root.bzl", "if_static")
 

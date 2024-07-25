@@ -1,6 +1,6 @@
 load("//tensorflow:pytype.default.bzl", "pytype_strict_contrib_test", "pytype_strict_library")
 load("//tensorflow:strict.default.bzl", "py_strict_library")
-load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
 
 # Placeholder: load py_proto_library
 load(

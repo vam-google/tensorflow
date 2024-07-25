@@ -1,7 +1,7 @@
 # python/lib/core package
 
 load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable", "tf_external_workspace_visible")
-load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 visibility = [
     "//engedu/ml/tf_from_scratch:__pkg__",

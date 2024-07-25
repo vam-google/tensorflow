@@ -1,6 +1,6 @@
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 load("//tensorflow:strict.default.bzl", "py_strict_library")
 load("//tensorflow/core/platform:rules_cc.bzl", "cc_library")
-load("//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 licenses(["notice"])
 
@@ -249,7 +249,11 @@ pybind_extension(
     data = [
         "_pywrap_converter_api.pyi",
     ],
+    visibility = [
+        "//tensorflow/python:__pkg__",
+    ],
     deps = [
+        ":converter_python_api",
         "//tensorflow/compiler/mlir/quantization/tensorflow/python:py_function_lib",
         "//tensorflow/python/lib/core:pybind11_lib",
         "//third_party/python_runtime:headers",

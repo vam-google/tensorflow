@@ -7,7 +7,7 @@ load(
 )
 load("//tensorflow:tensorflow.default.bzl", "tf_py_build_info_genrule", "tf_py_strict_test")
 load("//tensorflow/core/platform:build_config.bzl", "pyx_library", "tf_additional_all_protos", "tf_additional_lib_deps", "tf_proto_library", "tf_protos_grappler")  # @unused
-load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 visibility = [
     "//tensorflow:__subpackages__",

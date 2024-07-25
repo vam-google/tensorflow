@@ -1,6 +1,6 @@
 # This package loads pybind11 dependencies to ensure compatibility with Python API.
 # Files affected: graph_execution_options
-load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],

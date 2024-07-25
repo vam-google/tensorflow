@@ -1,5 +1,5 @@
 # Custom Ops useful for GenAI models.
-load("//tensorflow:tensorflow.default.bzl")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 load("//tensorflow/lite:build_def.bzl", "tflite_copts")
 load("//tensorflow/lite:special_rules.bzl", "tflite_portable_test_suite")
 

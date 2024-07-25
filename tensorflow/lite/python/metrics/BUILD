@@ -1,6 +1,7 @@
 load("//tensorflow:pytype.default.bzl", "pytype_strict_library")
 load("//tensorflow:strict.default.bzl", "py_strict_test")
 load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable", "if_portable")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -29,15 +30,18 @@ cc_library(
 
 pybind_extension(
     name = "_pywrap_tensorflow_lite_metrics_wrapper",
-    srcs = ["wrapper/metrics_wrapper_pybind11.cc"],
-    hdrs = ["wrapper/metrics_wrapper.h"],
+    srcs = [
+        "wrapper/metrics_wrapper_pybind11.cc",
+        "wrapper/metrics_wrapper.h"
+    ],
     compatible_with = get_compatible_with_portable(),
     enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_pywrap_tensorflow_lite_metrics_wrapper.pyi",
     ],
     visibility = [
         "__subpackages__",
+        "//tensorflow/python:__pkg__",
         "//tensorflow/tools/pip_package:__subpackages__",
     ],
     deps = [
@@ -45,7 +49,6 @@ pybind_extension(
         "//tensorflow/python/lib/core:pybind11_lib",
         "//third_party/python_runtime:headers",
         "@com_google_protobuf//:protobuf",
-        "@pybind11",
     ],
 )
 

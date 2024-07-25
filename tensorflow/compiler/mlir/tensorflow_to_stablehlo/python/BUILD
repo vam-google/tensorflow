@@ -4,7 +4,7 @@ load(
     "tf_py_strict_test",
 )
 load("//tensorflow/compiler/mlir/quantization/stablehlo:internal_visibility_allowlist.bzl", "internal_visibility_allowlist")
-load("//rules_pywrap:pywrap.bzl", "pybind_extension")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 package_group(
     name = "internal_visibility_allowlist_package",

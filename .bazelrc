@@ -599,10 +599,10 @@ build:release_linux_base --action_env PYTHON_BIN_PATH="/usr/bin/python3"
 build:release_linux_base --action_env PYTHON_LIB_PATH="/usr/lib/tf_python"
 build:release_linux_base --python_path="/usr/bin/python3"
 # Set Clang as compiler. Use the actual path to clang installed in container.
-build:release_cpu_linux_base --repo_env=CC="/usr/lib/llvm-18/bin/clang"
-build:release_cpu_linux_base --repo_env=BAZEL_COMPILER="/usr/lib/llvm-18/bin/clang"
+build:release_cpu_linux_base --repo_env=CC="/usr/lib/llvm-17/bin/clang"
+build:release_cpu_linux_base --repo_env=BAZEL_COMPILER="/usr/lib/llvm-17/bin/clang"
 # Test-related settings below this point.
-test:release_linux_base --build_tests_only --keep_going --test_output=errors --verbose_failures=true
+test:release_linux_base --build_tests_only --test_output=errors --verbose_failures=true
 test:release_linux_base --local_test_jobs=HOST_CPUS
 test:release_linux_base --test_env=LD_LIBRARY_PATH
 # Give only the list of failed tests at the end of the log
@@ -910,35 +910,38 @@ test:rbe_cross_compile_macos_x86 --jobs=100
 try-import %workspace%/warnings.bazelrc
 
 
-test:pycpp_filters --test_tag_filters=-no_oss,-oss_excluded,-oss_serial,-gpu,-tpu,-benchmark-test,-v1only
-test:pycpp_filters --build_tag_filters=-no_oss,-oss_excluded,-oss_serial,-gpu,-tpu,-benchmark-test,-v1only
-test:pycpp_filters --test_lang_filters=cc,py --test_size_filters=small,medium
-build:pycpp_filters --test_tag_filters=-no_oss,-oss_excluded,-oss_serial,-gpu,-tpu,-benchmark-test,-v1only
-build:pycpp_filters --build_tag_filters=-no_oss,-oss_excluded,-oss_serial,-gpu,-tpu,-benchmark-test,-v1only
-build:pycpp_filters --test_lang_filters=cc,py --test_size_filters=small,medium
-# build:pycpp_filters --deleted_packages=tensorflow/python/integration_testing,tensorflow/compiler/tf2tensorrt,tensorflow/compiler/xrt,tensorflow/core/tpu,tensorflow/lite
+build --symlink_prefix=/usr/local/google/home/vam/_/projects/github/vam-google/tensorflow_symlinks/bazel-
+build --keep_going
 
-test:pycpp --config=pycpp_filters -- //tensorflow/... -//tensorflow/python/integration_testing/... -//tensorflow/compiler/tf2tensorrt/... -//tensorflow/compiler/xrt/... -//tensorflow/core/tpu/... -//tensorflow/lite/... -//tensorflow/tools/toolchains/...
-
-build --config=pycpp_filters
-build --experimental_convenience_symlinks=clean
-
-build:pycpp_filters_win --nodistinct_host_configuration
-build:pycpp_filters_win --dynamic_mode=off
-build:pycpp_filters_win --config=xla
-build:pycpp_filters_win --config=short_logs
-build:pycpp_filters_win --announce_rc
-build:pycpp_filters_win --build_tag_filters=-no_windows,-no_oss
-
-build:pycpp_filters_win --keep_going
-build:pycpp_filters_win --verbose_failures
-build:pycpp_filters_win --copt=/d2ReducedOptimizeHugeFunctions
-build:pycpp_filters_win --host_copt=/d2ReducedOptimizeHugeFunctions
-build:pycpp_filters_win --enable_runfiles
-build:pycpp_filters_win --test_timeout="300,450,1200,3600"
-test:pycpp_filters_win --flaky_test_attempts=1
-build:pycpp_filters_win --nobuild_python_zip
-test:pycpp_filters_win --test_tag_filters=-no_windows,-no_oss,-gpu,-tpu
-
-#build --config=pycpp_filters_win
-#test --config=pycpp_filters_win
+#test:pycpp_filters --test_tag_filters=-no_oss,-oss_excluded,-oss_serial,-gpu,-tpu,-benchmark-test,-v1only
+#test:pycpp_filters --build_tag_filters=-no_oss,-oss_excluded,-oss_serial,-gpu,-tpu,-benchmark-test,-v1only
+#test:pycpp_filters --test_lang_filters=cc,py --test_size_filters=small,medium
+#build:pycpp_filters --test_tag_filters=-no_oss,-oss_excluded,-oss_serial,-gpu,-tpu,-benchmark-test,-v1only
+#build:pycpp_filters --build_tag_filters=-no_oss,-oss_excluded,-oss_serial,-gpu,-tpu,-benchmark-test,-v1only
+#build:pycpp_filters --test_lang_filters=cc,py --test_size_filters=small,medium
+## build:pycpp_filters --deleted_packages=tensorflow/python/integration_testing,tensorflow/compiler/tf2tensorrt,tensorflow/compiler/xrt,tensorflow/core/tpu,tensorflow/lite
+#
+#test:pycpp --config=pycpp_filters -- //tensorflow/... -//tensorflow/python/integration_testing/... -//tensorflow/compiler/tf2tensorrt/... -//tensorflow/compiler/xrt/... -//tensorflow/core/tpu/... -//tensorflow/lite/... -//tensorflow/tools/toolchains/...
+#
+#build --config=pycpp_filters
+#build --experimental_convenience_symlinks=clean
+#
+#build:pycpp_filters_win --nodistinct_host_configuration
+#build:pycpp_filters_win --dynamic_mode=off
+#build:pycpp_filters_win --config=xla
+#build:pycpp_filters_win --config=short_logs
+#build:pycpp_filters_win --announce_rc
+#build:pycpp_filters_win --build_tag_filters=-no_windows,-no_oss
+#
+#build:pycpp_filters_win --keep_going
+#build:pycpp_filters_win --verbose_failures
+#build:pycpp_filters_win --copt=/d2ReducedOptimizeHugeFunctions
+#build:pycpp_filters_win --host_copt=/d2ReducedOptimizeHugeFunctions
+#build:pycpp_filters_win --enable_runfiles
+#build:pycpp_filters_win --test_timeout="300,450,1200,3600"
+#test:pycpp_filters_win --flaky_test_attempts=1
+#build:pycpp_filters_win --nobuild_python_zip
+#test:pycpp_filters_win --test_tag_filters=-no_windows,-no_oss,-gpu,-tpu
+#
+##build --config=pycpp_filters_win
+##test --config=pycpp_filters_win

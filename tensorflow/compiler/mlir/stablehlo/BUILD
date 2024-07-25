@@ -1,6 +1,6 @@
 load("//tensorflow:pytype.default.bzl", "pytype_strict_library")
 load("//tensorflow:strict.default.bzl", "py_strict_test")
-load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -33,6 +33,9 @@ pybind_extension(
     deps = [
         "@stablehlo//:stablehlo_portable_api",
     ],
+    visibility = [
+        "//tensorflow/python:__pkg__",
+    ]
 )
 
 pytype_strict_library(

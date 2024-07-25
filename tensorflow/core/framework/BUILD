@@ -1826,7 +1826,10 @@ tf_proto_library(
         ":tensor_shape_proto",
         ":types_proto",
     ],
-    visibility = ["//tensorflow/python:__pkg__"],
+    visibility = [
+        "//tensorflow/python:__pkg__",
+        "//tensorflow/core:__subpackages__",
+    ],
 )
 
 # copybara:uncomment_begin(google-only)

@@ -37,7 +37,6 @@ load(
     _tf_windows_aware_platform_deps = "tf_windows_aware_platform_deps",
     _tsl_cc_test = "tsl_cc_test",
     _tsl_grpc_credentials_deps = "tsl_grpc_credentials_deps",
-    _tsl_protobuf_deps = "tsl_protobuf_deps",
 )
 
 pyx_library = _pyx_library

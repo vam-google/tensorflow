@@ -455,7 +455,18 @@ def pybind_extension(
         compatible_with = None,
         outer_module_name = "",
         additional_exported_symbols = [],
+        data = None,
+        pytype_srcs = None,
+        pytype_deps = None,
+        enable_stub_generation = None, # ignore
+        module_name = None, # ignore
+        link_in_framework = None, # ignore
+        additional_stubgen_deps = None, # ignore
         **kwargs):
+    _ignore = [enable_stub_generation, module_name, link_in_framework, additional_stubgen_deps]
+    actual_data = data
+    if pytype_srcs:
+        data = pytype_srcs
 
     cc_library_name = "_%s_cc_library" % name
 
@@ -469,6 +480,7 @@ def pybind_extension(
         testonly = testonly,
         compatible_with = compatible_with,
         local_defines = ["PROTOBUF_USE_DLLS"],
+        data = actual_data,
         **kwargs
     )
 

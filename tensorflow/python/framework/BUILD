@@ -2,7 +2,7 @@
 
 load("//tensorflow:pytype.default.bzl", "pytype_strict_library")
 load("//tensorflow:strict.default.bzl", "py_strict_library", "py_strict_test")
-load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 # Placeholder: load py_proto_library
 load(
@@ -24,7 +24,7 @@ load(
     "//tensorflow/tools/test:performance.bzl",
     "cuda_py_benchmark_test",
 )
-load("//rules_pywrap:pywrap.bzl", "stripped_cc_info")
+load("@local_xla//rules_pywrap:pywrap.bzl", "stripped_cc_info")
 
 visibility = tf_python_framework_friends()  # buildifier: disable=package-on-top
 
@@ -1060,7 +1060,6 @@ pybind_extension(
         "//third_party/python_runtime:headers",  # buildcleaner: keep
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/strings",
-        "@pybind11",
     ],
 )
 

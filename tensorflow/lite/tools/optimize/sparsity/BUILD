@@ -1,4 +1,5 @@
 load("//tensorflow:strict.default.bzl", "py_strict_test")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],

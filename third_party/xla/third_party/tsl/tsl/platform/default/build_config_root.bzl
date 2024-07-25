@@ -47,8 +47,8 @@ def if_static(extra_deps, otherwise = [], macos = []):
 
 def if_static_and_not_mobile(extra_deps, otherwise = []):
     return select({
-        str(Label("//tsl:android")): otherwise,
-        str(Label("//tsl:ios")): otherwise,
+        str(Label("@local_xla//xla/tsl:android")): otherwise,
+        str(Label("@local_xla//xla/tsl:ios")): otherwise,
         "//conditions:default": extra_deps,
     })
 

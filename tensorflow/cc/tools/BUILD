@@ -49,6 +49,6 @@ tf_cc_test(
         "//tensorflow/core:test_main",
         "//tensorflow/core:testlib",
         "//tensorflow/core/platform:status",
-        "@local_tsl//tsl/platform:errors",
+#        "@local_tsl//tsl/platform:errors",
     ],
 )

@@ -2,7 +2,7 @@
 
 load("//tensorflow:strict.default.bzl", "py_strict_library")
 load("//tensorflow:tensorflow.bzl", "if_oss")
-load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 load("//tensorflow:tensorflow.default.bzl", "tf_py_strict_test")
 
 # copybara:uncomment_begin(google-only)

@@ -8,7 +8,7 @@ load(
     "//tensorflow/core/platform:build_config_root.bzl",
     "if_static",
 )
-load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 
 package(
@@ -234,7 +234,7 @@ pybind_extension(
     # All deps must be header-only.
     deps = [
         ":py_function_lib",
-        ":quantize_model_cc",
+        ":quantize_model_cc_impl",
         ":type_casters",
         "//tensorflow/compiler/mlir/quantization/tensorflow:exported_model_proto_cc",
         "//tensorflow/compiler/mlir/quantization/tensorflow:quantization_options_proto_cc",

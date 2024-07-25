@@ -8,7 +8,7 @@ load(
 )
 load("//tensorflow:pytype.default.bzl", "pytype_strict_library")
 load("//tensorflow:strict.default.bzl", "py_strict_library")
-load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library", "pywrap_common_library")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library", "pywrap_common_library")
 
 # Placeholder: load py_proto_library
 load("//tensorflow:tensorflow.bzl", "VERSION", "cc_header_only_library", "clean_dep", "if_google", "if_oss", "if_windows", "if_xla_available", "tf_enable_mlir_bridge", "tsl_async_value_deps")
@@ -525,6 +525,7 @@ pybind_extension(
     name = "_pywrap_toco_api",
     srcs = [
         "lite/toco_python_api_wrapper.cc",
+        "//tensorflow/lite/toco/python:toco_python_api_hdrs",
     ],
     data = [
         "_pywrap_toco_api.pyi",
@@ -937,11 +938,18 @@ pywrap_library(
         "//tensorflow/python/grappler:_pywrap_tf_item",
         "//tensorflow/python/data/experimental/service:_pywrap_server_lib",
         "//tensorflow/python/data/experimental/service:_pywrap_snapshot_utils",
-        "//tensorflow/python/data/experimental/service:_pywrap_utils",
+        "//tensorflow/python/data/experimental/service:_pywrap_utils_exp",
         "//tensorflow/python:_pywrap_mlir",
-        "//tensorflow/compiler/mlir/quantization/tensorflow/calibrator:pywrap_calibration",
+        "//tensorflow/compiler/mlir/lite/python:_pywrap_converter_api",
+        "//tensorflow/lite/python/metrics:_pywrap_tensorflow_lite_metrics_wrapper",
+        "//tensorflow/lite/python/interpreter_wrapper:_pywrap_tensorflow_interpreter_wrapper",
+        "//tensorflow/lite/python/analyzer_wrapper:_pywrap_analyzer_wrapper",
+#        "//tensorflow/compiler/mlir/quantization/tensorflow/calibrator:pywrap_calibration",
+        "//tensorflow/python/tpu:_pywrap_sparse_core_layout",
+        "//tensorflow/compiler/mlir/stablehlo:stablehlo_extension",
         "//tensorflow/compiler/mlir/quantization/tensorflow/python:pywrap_function_lib",
         "//tensorflow/compiler/mlir/quantization/tensorflow/python:pywrap_quantize_model",
+        "//tensorflow/compiler/tf2tensorrt:_pywrap_py_utils",
         "//tensorflow/python:_pywrap_toco_api",
         "//tensorflow/python:flags_pybind",
         "//tensorflow/python/framework:_dtypes",
@@ -1013,8 +1021,8 @@ pywrap_library(
     py_cc_deps_filter = select({
         "//tensorflow:windows": [],
         "//conditions:default": [
-            "@local_tsl//tsl/python/lib/core:ml_dtypes_lib",
-            "@local_tsl//tsl/python/lib/core:numpy",
+            "@local_xla//xla/tsl/python/lib/core:ml_dtypes_lib",
+            "@local_xla//xla/tsl/python/lib/core:numpy",
             "@local_xla//xla/backends/profiler/cpu:python_tracer_impl",
             "@local_xla//xla/backends/profiler/cpu:python_tracer",
             "@local_xla//xla/python/profiler/internal:python_hooks",

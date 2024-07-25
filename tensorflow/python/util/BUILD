@@ -5,7 +5,7 @@ load("//tensorflow:strict.default.bzl", "py_strict_library")
 load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable", "tf_py_strict_test")
 load("//tensorflow/core/platform:build_config.bzl", "tf_proto_library")  # @unused
 load("//tensorflow/core/platform:build_config_root.bzl", "if_static")
-load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 
 visibility = [
@@ -258,7 +258,6 @@ pybind_extension(
         "//tensorflow/core:lib_headers_for_pybind",
         "//tensorflow/core:portable_gif_internal",
         "//tensorflow/core:protos_all_cc",
-        "//tensorflow/core/util/tensor_bundle:tensor_bundle",
         "//tensorflow/core/platform:status",
         "//tensorflow/core/platform:statusor",
         "//tensorflow/core/util/tensor_bundle",
@@ -445,10 +444,6 @@ pybind_extension(
     ],
     data = [
         "_tf_stack.pyi",
-    ],
-    private_deps = [
-        "@pybind11_abseil//pybind11_abseil:absl_casters",
-        "@pybind11_abseil//pybind11_abseil:status_casters",
     ],
     deps = [
         "//tensorflow/c:pywrap_required_hdrs",

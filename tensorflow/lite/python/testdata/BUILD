@@ -8,7 +8,7 @@ load(
 )
 load("//tensorflow:tensorflow.default.bzl", "tf_custom_op_py_strict_library")
 load("//tensorflow/lite:build_def.bzl", "tf_to_tflite", "tflite_copts")
-load("//rules_pywrap:pywrap.bzl", "pybind_extension")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],

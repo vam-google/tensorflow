@@ -21,6 +21,7 @@ load(
     "internal_visibility",
 )
 load("//xla/tsl:tsl.default.bzl", "get_compatible_with_portable")
+load("//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -57,7 +58,7 @@ exports_files([
     "xla_client.pyi",
 ])
 
-tsl_pybind_extension(
+pybind_extension(
     name = "custom_calls_testlib",
     srcs = ["custom_calls_testlib.cc"],
     visibility = ["//visibility:private"],
@@ -1266,7 +1267,7 @@ cc_library(
     ],
 )
 
-tsl_pybind_extension(
+pybind_extension(
     name = "xla_gpu_extension",
     srcs = ["xla_gpu_support.cc"],
     copts = [
@@ -1287,7 +1288,7 @@ tsl_pybind_extension(
     ],
 )
 
-tsl_pybind_extension(
+pybind_extension(
     name = "xla_extension",
     srcs = ["xla.cc"],
     copts = [

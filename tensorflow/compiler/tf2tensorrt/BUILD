@@ -33,7 +33,7 @@ load(
     "if_static",
 )
 load("//tensorflow/core/platform:rules_cc.bzl", "cc_library")
-load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],

@@ -5,7 +5,7 @@ load(
     "tf_py_strict_test",
 )
 load("//tensorflow/compiler/mlir/quantization/stablehlo:internal_visibility_allowlist.bzl", "internal_visibility_allowlist")
-load("//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 package_group(
     name = "internal_visibility_allowlist_package",
@@ -158,9 +158,6 @@ pybind_extension(
     deps = [
         ":pywrap_quantization_lib_header_only",
         "//tensorflow/compiler/mlir/quantization/tensorflow/python:type_casters",
-        "@pybind11_abseil//pybind11_abseil:absl_casters",
-        "@pybind11_abseil//pybind11_abseil:import_status_module",
-        "@pybind11_abseil//pybind11_abseil:status_casters",
     ],
     private_deps = [
         "@pybind11_abseil//pybind11_abseil:absl_casters",
