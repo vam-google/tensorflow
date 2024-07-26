@@ -184,13 +184,13 @@ xla_test(
         "//xla/stream_executor:device_memory_handle",
         "//xla/stream_executor:platform_manager",
         "//xla/stream_executor/gpu:gpu_init",
-        "//xla/stream_executor/gpu:gpu_timer",
         "//xla/stream_executor/gpu:gpu_types_header",
         "//xla/stream_executor/host:host_platform",
         "@com_google_absl//absl/log:check",
         "@com_google_absl//absl/random",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/time",
+        "@local_tsl//tsl/platform:statusor",
         "@local_tsl//tsl/platform:test",
         "@local_tsl//tsl/platform:test_benchmark",
         "@local_tsl//tsl/platform:test_main",
@@ -409,6 +409,17 @@ cuda_library(
         ":cutlass_gemm_adaptor",
         "@cutlass_archive//:cutlass",
         "@local_config_cuda//cuda:cuda_headers",
+    ]),
+)
+
+cuda_library(
+    name = "cutlass_gemm_kernel_bf16xbf16_to_f32",
+    srcs = if_cuda_is_configured(["cutlass_gemm_kernel_bf16xbf16_to_f32.cu.cc"]),
+    copts = ["-Wno-unknown-attributes"],
+    deps = if_cuda_is_configured([
+        ":cutlass_gemm_adaptor",
+        "@local_config_cuda//cuda:cuda_headers",
+        "@cutlass_archive//:cutlass",
     ]),
 )
 

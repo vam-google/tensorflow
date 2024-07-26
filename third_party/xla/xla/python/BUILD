@@ -63,10 +63,10 @@ pybind_extension(
     srcs = ["custom_calls_testlib.cc"],
     visibility = ["//visibility:private"],
     deps = [
-        "//third_party/nanobind",
         "//xla/ffi/api:c_api",
         "//xla/ffi/api:ffi",
         "@com_google_absl//absl/status",
+        "@nanobind",
     ],
 )
 
@@ -170,11 +170,11 @@ pybind_extension(
     srcs = ["status_casters_ext.cc"],
     visibility = ["//visibility:private"],
     deps = [
-        "//third_party/nanobind",
         "//xla/pjrt:exceptions",
         "//xla/pjrt:status_casters",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
+        "@nanobind",
     ],
 )
 
@@ -205,7 +205,6 @@ cc_library(
     deps = [
         ":nb_helpers",
         ":nb_numpy",
-        "//third_party/nanobind",
         "//xla:literal",
         "//xla:shape_util",
         "//xla:status_macros",
@@ -224,6 +223,7 @@ cc_library(
         "@local_config_python//:python_headers",  # buildcleaner: keep
         "@local_tsl//tsl/platform:logging",
         "@local_tsl//tsl/platform:statusor",
+        "@nanobind",
     ],
 )
 
@@ -238,12 +238,12 @@ cc_library(
     features = ["-use_header_modules"],
     visibility = [":friends"],
     deps = [
-        "//third_party/nanobind",
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/container:inlined_vector",
         "@com_google_absl//absl/synchronization",
         "@com_google_absl//absl/types:span",
         "@local_config_python//:python_headers",  # buildcleaner: keep
+        "@nanobind",
     ],
 )
 
@@ -266,7 +266,7 @@ cc_library(
         "@com_google_absl//absl/hash",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/strings:str_format",
-        "//third_party/nanobind",
+        "@nanobind",
         "@local_config_python//:python_headers",  # buildcleaner: keep
         "//xla/pjrt:exceptions",
         "@local_tsl//tsl/platform",
@@ -285,7 +285,6 @@ cc_library(
     ],
     features = ["-use_header_modules"],
     deps = [
-        "//third_party/nanobind",
         "//xla:util",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/status:statusor",
@@ -293,6 +292,7 @@ cc_library(
         "@local_tsl//tsl/platform:logging",
         "@local_tsl//tsl/platform:protobuf",
         "@local_tsl//tsl/profiler/protobuf:profile_proto_cc",
+        "@nanobind",
     ],
 )
 
@@ -369,7 +369,7 @@ cc_library(
         "@com_google_absl//absl/types:variant",
         "@llvm-project//llvm:Support",
         "@llvm-project//mlir:IR",
-        "//third_party/nanobind",
+        "@nanobind",
         "@local_config_python//:python_headers",  # buildcleaner: keep
         "//xla:comparison_util",
         "//xla:literal",
@@ -452,7 +452,6 @@ cc_library(
     deps = [
         ":nb_numpy",
         ":python_ref_manager",
-        "//third_party/nanobind",
         "//xla:comparison_util",
         "//xla:xla_data_proto_cc",
         "//xla/pjrt:host_callback",
@@ -467,6 +466,7 @@ cc_library(
         "@com_google_absl//absl/types:span",
         "@local_config_python//:python_headers",  # buildcleaner: keep
         "@local_tsl//tsl/platform:statusor",
+        "@nanobind",
     ],
 )
 
@@ -492,7 +492,6 @@ cc_library(
     deps = [
         ":callback",
         ":nb_numpy",
-        "//third_party/nanobind",
         "//xla:comparison_util",
         "//xla/pjrt:exceptions",
         "//xla/pjrt:host_callback",
@@ -501,6 +500,7 @@ cc_library(
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
         "@local_tsl//tsl/platform:errors",
+        "@nanobind",
     ] + if_rocm(
         ["@local_config_rocm//rocm:rocm_headers"],
         ["@local_config_cuda//cuda:cuda_headers"],
@@ -524,7 +524,6 @@ cc_library(
         ":traceback",
         ":types",
         ":util",
-        "//third_party/nanobind",
         "//xla:shape_util",
         "//xla:status_macros",
         "//xla:util",
@@ -545,6 +544,7 @@ cc_library(
         "@local_tsl//tsl/platform:errors",
         "@local_tsl//tsl/platform:logging",
         "@local_tsl//tsl/platform:statusor",
+        "@nanobind",
     ],
 )
 
@@ -576,7 +576,7 @@ cc_library(
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/strings:str_format",
         "@com_google_absl//absl/types:span",
-        "//third_party/nanobind",
+        "@nanobind",
         "@local_config_python//:python_headers",  # build_cleaner: keep
         "//xla/pjrt:pjrt_client",
         "//xla/pjrt:status_casters",
@@ -641,7 +641,7 @@ cc_library(
         # placeholder for index annotation deps
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
-        "//third_party/nanobind",
+        "@nanobind",
         "//xla:shape_util",
         "//xla:util",
         "//xla/hlo/ir:hlo",
@@ -671,7 +671,7 @@ cc_library(
         ":types",
         # placeholder for index annotation deps
         "@com_google_absl//absl/types:span",
-        "//third_party/nanobind",
+        "@nanobind",
         "//xla:xla_data_proto_cc",
         "//xla/client:xla_builder",
         "//xla/client:xla_computation",
@@ -751,7 +751,7 @@ cc_library(
         "@com_google_absl//absl/strings:str_format",
         "@com_google_absl//absl/synchronization",
         "@com_google_absl//absl/types:span",
-        "//third_party/nanobind",
+        "@nanobind",
         "@local_config_python//:python_headers",  # buildcleaner: keep
         "//xla:util",
         "//xla/pjrt:exceptions",
@@ -799,7 +799,7 @@ cc_library(
         "@com_google_absl//absl/strings:str_format",
         "@com_google_absl//absl/synchronization",
         "@com_google_absl//absl/types:span",
-        "//third_party/nanobind",
+        "@nanobind",
         "@local_config_python//:python_headers",  # buildcleaner: keep
         "//xla:status_macros",
         "//xla:util",
@@ -858,7 +858,7 @@ cc_library(
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/synchronization",
         "@llvm-project//llvm:Support",
-        "//third_party/nanobind",
+        "@nanobind",
         "//xla:literal",
         "//xla/client:executable_build_options",
         "//xla/client:xla_builder",
@@ -914,7 +914,7 @@ cc_library(
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/strings:str_format",
         "@com_google_absl//absl/types:span",
-        "//third_party/nanobind",
+        "@nanobind",
         "@local_config_python//:python_headers",  # buildcleaner: keep
         "//xla/pjrt:exceptions",
         "@local_tsl//tsl/platform:logging",
@@ -946,7 +946,7 @@ cc_library(
         "@llvm-project//mlir:ReconcileUnrealizedCasts",
         "@llvm-project//mlir:SparseTensorDialect",
         "@llvm-project//mlir:Support",
-        "//third_party/nanobind",
+        "@nanobind",
         "@stablehlo//:chlo_ops",
         "@stablehlo//:stablehlo_ops",
         "@stablehlo//:stablehlo_serialization",
@@ -1028,7 +1028,7 @@ cc_library(
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/types:span",
-        "//third_party/nanobind",
+        "@nanobind",
         "//xla/backends/profiler:profiler_backends",
         "//xla/backends/profiler/cpu:python_tracer",
         "//xla/backends/profiler/plugin:plugin_tracer",
@@ -1069,7 +1069,7 @@ cc_library(
         # placeholder for index annotation deps
         "@com_google_absl//absl/functional:function_ref",
         "@com_google_absl//absl/status",
-        "//third_party/nanobind",
+        "@nanobind",
         "//xla:util",
     ],
 )
@@ -1112,7 +1112,7 @@ cc_library(
         "@com_google_absl//absl/container:node_hash_map",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/synchronization",
-        "//third_party/nanobind",
+        "@nanobind",
         "//xla/pjrt:lru_cache",
     ],
 )
@@ -1143,7 +1143,7 @@ cc_library(
         "@com_google_absl//absl/strings:str_format",
         "@com_google_absl//absl/synchronization",
         "@com_google_absl//absl/types:span",
-        "//third_party/nanobind",
+        "@nanobind",
         "//xla:array",
         "//xla:debug_options_flags",
         "//xla:literal",
@@ -1255,7 +1255,6 @@ cc_library(
     deps = [
         ":nb_class_ptr",
         ":py_client",
-        "//third_party/nanobind",
         "//xla/pjrt:pjrt_client",
         "//xla/pjrt:status_casters",
         "//xla/pjrt/distributed:client",
@@ -1264,6 +1263,7 @@ cc_library(
         "//xla/pjrt/gpu:se_gpu_pjrt_client",
         "//xla/python/pjrt_ifrt",
         "@local_config_python//:python_headers",  # buildcleaner: keep
+        "@nanobind",
     ],
 )
 
@@ -1283,7 +1283,7 @@ pybind_extension(
         ":logging",
         ":py_client",
         # placeholder for index annotation deps
-        "//third_party/nanobind",
+        "@nanobind",
         "@local_config_python//:python_headers",  # buildcleaner: keep
     ],
 )
@@ -1359,7 +1359,7 @@ pybind_extension(
         "@com_google_absl//absl/types:span",
         "@llvm-project//llvm:Support",
         "@llvm-project//mlir:IR",
-        "//third_party/nanobind",
+        "@nanobind",
         "@local_config_python//:python_headers",  # buildcleaner: keep
         "//xla:literal",
         "//xla:shape_util",
@@ -1404,9 +1404,9 @@ pybind_extension(
         "//xla/tsl:macos": [],
         "//xla/tsl:windows": [],
         "//conditions:default": [
-            "//third_party/gloo:transport_tcp",
             "//xla/pjrt/cpu:gloo_collectives",
             "//xla/pjrt/cpu:gloo_kv_store",
+            "@gloo//:transport_tcp",
         ],
     }) + select({
         # mpitrampoline does not build on windows
@@ -1479,7 +1479,7 @@ cc_library(
     hdrs = ["nb_class_ptr.h"],
     copts = ["-fexceptions"],
     features = ["-use_header_modules"],
-    deps = ["//third_party/nanobind"],
+    deps = ["@nanobind"],
 )
 
 cc_library(
@@ -1490,9 +1490,9 @@ cc_library(
     copts = ["-fexceptions"],
     features = ["-use_header_modules"],
     deps = [
-        "//third_party/nanobind",
         "@com_google_absl//absl/strings:str_format",
         "@local_config_python//:python_headers",
+        "@nanobind",
     ],
 )
 
@@ -1504,10 +1504,10 @@ cc_library(
     copts = ["-fexceptions"],
     features = ["-use_header_modules"],
     deps = [
-        "//third_party/nanobind",
         "//xla/tsl/python/lib/core:numpy",
         "@com_google_absl//absl/types:span",
         "@local_config_python//:python_headers",
+        "@nanobind",
     ],
 )
 
@@ -1518,8 +1518,8 @@ cc_library(
     copts = ["-fexceptions"],
     features = ["-use_header_modules"],
     deps = [
-        "//third_party/nanobind",
         "@com_google_absl//absl/container:inlined_vector",
+        "@nanobind",
     ],
 )
 
@@ -1530,8 +1530,8 @@ cc_library(
     copts = ["-fexceptions"],
     features = ["-use_header_modules"],
     deps = [
-        "//third_party/nanobind",
         "@com_google_absl//absl/types:span",
+        "@nanobind",
     ],
 )
 
@@ -1542,8 +1542,8 @@ cc_library(
     copts = ["-fexceptions"],
     features = ["-use_header_modules"],
     deps = [
-        "//third_party/nanobind",
         "@com_google_absl//absl/container:flat_hash_map",
+        "@nanobind",
     ],
 )
 
@@ -1554,8 +1554,8 @@ cc_library(
     copts = ["-fexceptions"],
     features = ["-use_header_modules"],
     deps = [
-        "//third_party/nanobind",
         "@com_google_absl//absl/container:flat_hash_set",
+        "@nanobind",
     ],
 )
 

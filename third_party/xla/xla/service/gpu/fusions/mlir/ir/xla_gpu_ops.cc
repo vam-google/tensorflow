@@ -20,30 +20,37 @@ limitations under the License.
 #include <utility>
 #include <vector>
 
+#include "llvm/ADT/DenseSet.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/ADT/STLFunctionalExtras.h"
 #include "llvm/ADT/SmallBitVector.h"
 #include "llvm/ADT/TypeSwitch.h"  // IWYU pragma: keep
-#include "mlir/Dialect/Arith/IR/Arith.h"  // from @llvm-project
-#include "mlir/Dialect/Func/IR/FuncOps.h"  // from @llvm-project
-#include "mlir/IR/AffineExpr.h"  // from @llvm-project
-#include "mlir/IR/Builders.h"  // from @llvm-project  // IWYU pragma: keep
-#include "mlir/IR/DialectImplementation.h"  // from @llvm-project  // IWYU pragma: keep
-#include "mlir/IR/MLIRContext.h"  // from @llvm-project  // IWYU pragma: keep
-#include "mlir/IR/OpDefinition.h"  // from @llvm-project
-#include "mlir/IR/OpImplementation.h"  // from @llvm-project
-#include "mlir/IR/OperationSupport.h"  // from @llvm-project
-#include "mlir/IR/PatternMatch.h"  // from @llvm-project  // IWYU pragma: keep
-#include "mlir/IR/SymbolTable.h"  // from @llvm-project
-#include "mlir/IR/TypeUtilities.h"  // from @llvm-project  // IWYU pragma: keep
-#include "mlir/IR/Value.h"  // from @llvm-project
-#include "mlir/IR/ValueRange.h"  // from @llvm-project
-#include "mlir/Support/LLVM.h"  // from @llvm-project
-#include "mlir/Support/LogicalResult.h"  // from @llvm-project
-#include "mlir/Transforms/InliningUtils.h"  // from @llvm-project
+#include "llvm/Support/Casting.h"
+#include "llvm/Support/LogicalResult.h"
+#include "mlir/Dialect/Arith/IR/Arith.h"
+#include "mlir/Dialect/Func/IR/FuncOps.h"
+#include "mlir/IR/AffineExpr.h"
+#include "mlir/IR/Builders.h"  // IWYU pragma: keep
+#include "mlir/IR/BuiltinAttributes.h"
+#include "mlir/IR/DialectImplementation.h"  // IWYU pragma: keep
+#include "mlir/IR/MLIRContext.h"  // IWYU pragma: keep
+#include "mlir/IR/OpDefinition.h"
+#include "mlir/IR/OpImplementation.h"
+#include "mlir/IR/OperationSupport.h"
+#include "mlir/IR/PatternMatch.h"  // IWYU pragma: keep
+#include "mlir/IR/SymbolTable.h"
+#include "mlir/IR/TypeUtilities.h"  // IWYU pragma: keep
+#include "mlir/IR/Value.h"
+#include "mlir/IR/ValueRange.h"
+#include "mlir/Support/LLVM.h"
+#include "mlir/Support/LogicalResult.h"
+#include "mlir/Transforms/InliningUtils.h"
 #include "xla/service/gpu/fusions/mlir/ir/xla_gpu_dialect.cc.inc"
-#include "xla/service/gpu/model/indexing_analysis.h"
 #include "xla/service/gpu/model/indexing_map.h"
+
+#define GET_ATTRDEF_CLASSES
+#include "xla/service/gpu/fusions/mlir/ir/xla_gpu_attrs.cc.inc"
+#undef GET_ATTRDEF_CLASSES
 
 namespace xla {
 namespace gpu {
@@ -149,6 +156,11 @@ void XlaGpuDialect::initialize() {
 #include "xla/service/gpu/fusions/mlir/ir/xla_gpu_ops.cc.inc"
 #undef GET_OP_LIST
       >();
+  addAttributes<
+#define GET_ATTRDEF_LIST
+#include "xla/service/gpu/fusions/mlir/ir/xla_gpu_attrs.cc.inc"
+      >();
+#undef GET_ATTRDEF_LIST
   addInterfaces<XlaGpuInlinerInterface>();
 }
 
@@ -243,12 +255,12 @@ mlir::ParseResult parseOperandsWithBoundsList(
         if (parser.parseOperand(operand) || parser.parseKeyword("in") ||
             parser.parseLSquare() || parser.parseInteger(lower_bound) ||
             parser.parseComma() || parser.parseInteger(upper_bound) ||
-            parser.parseRParen()) {
+            parser.parseRSquare()) {
           return failure();
         }
         operands->push_back(operand);
         lower_bounds->push_back(lower_bound);
-        upper_bounds->push_back(upper_bound - 1);
+        upper_bounds->push_back(upper_bound);
         return success();
       })) {
     return failure();
@@ -309,7 +321,7 @@ void ApplyIndexingOp::print(mlir::OpAsmPrinter& p) {
     p << '(';
     for (int dim_id = 0; dim_id < num_dimensions; ++dim_id) {
       p << operands[dim_id] << " in " << '[' << lower_bounds[dim_id] << ", "
-        << upper_bounds[dim_id] + 1 << ')';
+        << upper_bounds[dim_id] << ']';
       if (dim_id != num_dimensions - 1) {
         p << ", ";
       }
@@ -322,7 +334,7 @@ void ApplyIndexingOp::print(mlir::OpAsmPrinter& p) {
     for (int symbol_id = 0; symbol_id < num_symbols; ++symbol_id) {
       unsigned operand_id = num_dimensions + symbol_id;
       p << operands[operand_id] << " in " << '[' << lower_bounds[operand_id]
-        << ", " << upper_bounds[operand_id] + 1 << ')';
+        << ", " << upper_bounds[operand_id] << ']';
       if (symbol_id != num_symbols - 1) {
         p << ", ";
       }
@@ -601,10 +613,9 @@ struct FoldApplyIndexingResults
     new_exprs.reserve(num_results);
     SmallVector<Value, 4> new_values;
     new_values.reserve(num_results);
-    Value zero = rewriter.create<arith::ConstantIndexOp>(loc, 0);
     for (mlir::OpResult opresult : indexing_op->getOpResults()) {
       if (opresult.use_empty()) {
-        new_values.push_back(zero);
+        new_values.push_back(rewriter.create<arith::ConstantIndexOp>(loc, 0));
         continue;
       }
 
@@ -693,6 +704,15 @@ void AtomicRMWOp::build(OpBuilder& builder, OperationState& result,
   Region* body = result.addRegion();
   builder.createBlock(body);
   body->addArgument(tensor_type.getElementType(), tensor.getLoc());
+}
+
+mlir::OpFoldResult AtomicRMWOp::fold(FoldAdaptor adaptor) {
+  auto* body = getBody();
+  if (&body->front() == body->getTerminator() &&
+      body->front().getOperand(0) == body->getArgument(0)) {
+    return getOperand(0);
+  }
+  return {};
 }
 
 //===----------------------------------------------------------------------===//
