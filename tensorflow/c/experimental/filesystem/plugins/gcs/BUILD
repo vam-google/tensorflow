@@ -10,7 +10,6 @@ package(
 # Filesystem implementation for GCS environments
 tf_cc_shared_object(
     name = "gcs_filesystem",
-    framework_so = [],
     linkstatic = False,
     per_os_targets = 1,
     visibility = ["//visibility:public"],

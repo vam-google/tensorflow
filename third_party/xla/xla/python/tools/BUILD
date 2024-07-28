@@ -3,7 +3,7 @@
 # We must instead use `tsl_pybind_extension` and `py_strict_test`.
 load("//xla:pytype.default.bzl", "pytype_strict_library")
 load("//xla:strict.default.bzl", "py_strict_test")
-load("//xla/tsl:tsl.default.bzl", "tsl_pybind_extension")
+load("//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -50,11 +50,13 @@ pytype_strict_library(
 # NOTE: Copybara detects the `tsl_pybind_extension` rule and automatically
 # injects the @com_google_protobuf//:protobuf_python python dependency
 # required by "@pybind11_protobuf//pybind11_protobuf:native_proto_caster".
-tsl_pybind_extension(
+pybind_extension(
     name = "_types",
     srcs = ["_types.cc"],
     pytype_deps = ["//third_party/py/numpy"],
-    pytype_srcs = ["_types.pyi"],
+    data = [
+        "_types.pyi"
+    ],
     # Users should depend on ":types" instead.
     visibility = ["//visibility:private"],
     deps = [
@@ -67,10 +69,11 @@ tsl_pybind_extension(
         "//xla/tsl/python/lib/core:numpy",
         "@com_google_absl//absl/strings",
         "@nanobind",
-        "@pybind11",
+    ],
+    private_deps = [
         "@pybind11_abseil//pybind11_abseil:import_status_module",
         "@pybind11_protobuf//pybind11_protobuf:native_proto_caster",
-    ],
+    ]
 )
 
 py_strict_test(

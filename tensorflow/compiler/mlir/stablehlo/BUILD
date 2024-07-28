@@ -1,6 +1,6 @@
-load("@local_xla//xla/tsl:tsl.default.bzl", "tsl_pybind_extension")
 load("//tensorflow:pytype.default.bzl", "pytype_strict_library")
 load("//tensorflow:strict.default.bzl", "py_strict_test")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -18,13 +18,11 @@ package_group(
     ],
 )
 
-tsl_pybind_extension(
+pybind_extension(
     name = "stablehlo_extension",
     srcs = [
         "stablehlo.cc",
         "@stablehlo//:stablehlo/integrations/python/PortableApi.cpp",
-    ],
-    hdrs = [
         "@stablehlo//:stablehlo/integrations/python/PortableApi.h",
     ],
     copts = [
@@ -33,9 +31,11 @@ tsl_pybind_extension(
     ],
     features = ["-use_header_modules"],
     deps = [
-        "@pybind11",
         "@stablehlo//:stablehlo_portable_api",
     ],
+    visibility = [
+        "//tensorflow/python:__pkg__",
+    ]
 )
 
 pytype_strict_library(

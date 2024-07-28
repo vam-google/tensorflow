@@ -1,4 +1,5 @@
-load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable", "pybind_extension")
+load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -73,6 +74,5 @@ pybind_extension(
     deps = [
         ":gradient_ops",
         "//tensorflow/lite:mutable_op_resolver",
-        "@pybind11",
     ],
 )

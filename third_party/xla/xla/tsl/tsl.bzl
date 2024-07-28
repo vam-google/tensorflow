@@ -307,7 +307,6 @@ def tsl_copts(
         if_ios_x86_64(["-msse4.1"]) +
         if_no_default_logger(["-DNO_DEFAULT_LOGGER"]) +
         select({
-            clean_dep("//xla/tsl:framework_shared_object"): [],
             "//conditions:default": ["-DTENSORFLOW_MONOLITHIC_BUILD"],
         }) +
         select({

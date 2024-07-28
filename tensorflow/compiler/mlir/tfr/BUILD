@@ -9,10 +9,11 @@ load(
     "tf_cc_binary",
     "tf_cc_test",
 )
-load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable", "tf_py_strict_test", "tf_python_pybind_extension")
+load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable", "tf_py_strict_test")
 load("//tensorflow/compiler/mlir:glob_lit_test.bzl", "glob_lit_tests")
 load("//tensorflow/compiler/mlir/tfr:build_defs.bzl", "gen_op_libraries")
 load("//tensorflow/core/platform:rules_cc.bzl", "cc_library")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -349,11 +350,10 @@ tf_py_strict_test(
     ],
 )
 
-tf_python_pybind_extension(
+pybind_extension(
     name = "tfr_wrapper",
     srcs = ["python/tfr_wrapper.cc"],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "tfr_wrapper.pyi",
     ],
     deps = [
@@ -367,8 +367,8 @@ tf_python_pybind_extension(
         "@llvm-project//mlir:Parser",
         "@llvm-project//mlir:SCFDialect",
         "@llvm-project//mlir:ShapeDialect",
-        "@pybind11",
     ],
+    visibility = ["//tensorflow/python:__pkg__"],
 )
 
 py_strict_library(

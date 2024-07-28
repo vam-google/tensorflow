@@ -1,6 +1,6 @@
 load("//tensorflow:strict.default.bzl", "py_strict_binary", "py_strict_library", "py_strict_test")
 load("//tensorflow:tensorflow.bzl", "check_deps")
-load("//tensorflow:tensorflow.default.bzl", "cuda_py_strict_test", "tf_py_strict_test", "tf_python_pybind_extension")
+load("//tensorflow:tensorflow.default.bzl", "cuda_py_strict_test", "tf_py_strict_test")
 load("//tensorflow/compiler/tests:build_defs.bzl", "tf_xla_py_strict_test")
 load(
     "//tensorflow/core/platform:build_config.bzl",
@@ -12,6 +12,7 @@ load(
     "cuda_py_benchmark_test",
     "tf_py_logged_benchmark",
 )
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -85,12 +86,11 @@ cc_library(
     ],
 )
 
-tf_python_pybind_extension(
+pybind_extension(
     name = "pywrap_tensor_test_util",
     testonly = True,
     srcs = ["pywrap_tensor_test_util.cc"],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "pywrap_tensor_test_util.pyi",
     ],
     deps = [
@@ -98,7 +98,6 @@ tf_python_pybind_extension(
         "//tensorflow/c:tf_status_helper",
         "//tensorflow/c/eager:c_api_test_util",
         "//tensorflow/python/lib/core:pybind11_lib",
-        "@pybind11",
     ],
 )
 
@@ -234,12 +233,11 @@ py_strict_library(
     ],
 )
 
-tf_python_pybind_extension(
+pybind_extension(
     name = "custom_device_testutil",
     testonly = True,
     srcs = ["custom_device_testutil.cc"],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "custom_device_testutil.pyi",
     ],
     deps = [
@@ -254,7 +252,6 @@ tf_python_pybind_extension(
         "//tensorflow/python/lib/core:safe_pyobject_ptr",
         "//tensorflow/python/util:cpp_python_util",
         "//third_party/python_runtime:headers",
-        "@pybind11",
     ],
 )
 

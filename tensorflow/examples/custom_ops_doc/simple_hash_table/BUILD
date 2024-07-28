@@ -41,10 +41,11 @@ py_strict_library(
 )
 
 tf_py_test(
-    name = "simple_hash_table_test",
+    name = "simple_ht_test",
     size = "medium",  # This test blocks because it writes and reads a file,
     timeout = "short",  # but it still runs quickly.
     srcs = ["simple_hash_table_test.py"],
+    main = "simple_hash_table_test.py",
     python_version = "PY3",
     srcs_version = "PY3",
     tags = [

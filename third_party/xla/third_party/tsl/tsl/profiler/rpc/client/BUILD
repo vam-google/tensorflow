@@ -32,7 +32,7 @@ cc_library(
         "//learning/pathways/data_parallel:__pkg__",
     ]),
     deps = [
-        ":profiler_client_for_pybind",
+        ":profiler_client",
         ":remote_profiler_session_manager",
         ":save_profile",
         "//tsl/platform:errors",
@@ -180,7 +180,7 @@ cc_library(
     hdrs = ["remote_profiler_session_manager.h"],
     copts = tf_profiler_copts(),
     deps = [
-        ":profiler_client_for_pybind",
+        ":profiler_client",
         "//tsl/platform:env_time",
         "//tsl/platform:errors",
         "//tsl/platform:logging",

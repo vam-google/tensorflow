@@ -20,7 +20,7 @@ load(
     "tf_custom_op_library_additional_deps",
     "tf_gen_op_wrapper_py",
 )
-load("//tensorflow:tensorflow.default.bzl", "pybind_extension", "tf_cuda_cc_test", "tf_custom_op_py_strict_library", "tf_gen_op_libs")
+load("//tensorflow:tensorflow.default.bzl", "tf_cuda_cc_test", "tf_custom_op_py_strict_library", "tf_gen_op_libs")
 load(
     "//tensorflow/core/platform:build_config.bzl",
     "tf_additional_all_protos",
@@ -33,6 +33,7 @@ load(
     "if_static",
 )
 load("//tensorflow/core/platform:rules_cc.bzl", "cc_library")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension", "pywrap_library")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -280,7 +281,6 @@ cc_library(
         "//tensorflow/core:lib",
         "//tensorflow/core:lib_internal",
         "//tensorflow/core:lib_proto_parsing",
-        "//tensorflow/core:stream_executor_headers_lib",
         "//tensorflow/core/common_runtime:core_cpu_lib_no_ops",
         "//tensorflow/core/grappler/costs:graph_properties",
         "//tensorflow/core/platform:stream_executor",
@@ -431,9 +431,9 @@ tf_cuda_library(
         ":trt_parameters",
         ":utils",
         "//tensorflow/core:framework",
-        "//tensorflow/core:framework_headers_lib",
+        "//tensorflow/core/framework:reader_base",
         "//tensorflow/core:lib",
-        "//tensorflow/core:stream_executor_headers_lib",
+        "//tensorflow/core/platform:stream_executor",
         "//tensorflow/core/platform:status",
         "//tensorflow/core/profiler/lib:traceme",
         "@com_google_absl//absl/strings",
@@ -516,7 +516,8 @@ tf_cuda_library(
         ":trt_engine_utils",
         ":trt_logging",
         ":utils",
-        "//tensorflow/core:framework_headers_lib",
+        "//tensorflow/core:framework",
+        "//tensorflow/core/framework:reader_base",
         "//tensorflow/core:framework_lite",
         "//tensorflow/core:gpu_runtime",
         "//tensorflow/core:graph",
@@ -531,7 +532,8 @@ tf_cuda_library(
     hdrs = ["utils/trt_allocator.h"],
     features = ["-layering_check"],
     deps = [
-        "//tensorflow/core:framework_headers_lib",
+        "//tensorflow/core:framework",
+        "//tensorflow/core/framework:reader_base",
         "//tensorflow/core:framework_lite",
         "//tensorflow/core:lib_proto_parsing",
     ] + if_tensorrt([":tensorrt_lib"]),
@@ -1052,51 +1054,8 @@ tf_cuda_library(
 pybind_extension(
     name = "_pywrap_py_utils",
     srcs = ["utils/py_utils_wrapper.cc"],
-    dynamic_deps = select({
-        "//tensorflow:macos": ["//tensorflow:libtensorflow_framework.%s.dylib" % VERSION],
-        "//conditions:default": ["//tensorflow:libtensorflow_framework.so.%s" % VERSION],
-        "//tensorflow:windows": [],
-    }),
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_pywrap_py_utils.pyi",
-    ],
-    static_deps = [
-        "@bazel_tools//:__subpackages__",
-        "@boringssl//:__subpackages__",
-        "@com_github_googlecloudplatform_tensorflow_gcp_tools//:__subpackages__",
-        "@com_google_absl//:__subpackages__",
-        "@com_google_googleapis//:__subpackages__",
-        "@com_google_protobuf//:__subpackages__",
-        "@com_googlesource_code_re2//:__subpackages__",
-        "@curl//:__subpackages__",
-        "@double_conversion//:__subpackages__",
-        "@eigen_archive//:__subpackages__",
-        "@farmhash_archive//:__subpackages__",
-        "@fft2d//:__subpackages__",
-        "@gif//:__subpackages__",
-        "@highwayhash//:__subpackages__",
-        "@hwloc//:__subpackages__",
-        "@jsoncpp_git//:__subpackages__",
-        "@libjpeg_turbo//:__subpackages__",
-        "@llvm_openmp//:__subpackages__",
-        "@llvm-project//:__subpackages__",
-        "@llvm_terminfo//:__subpackages__",
-        "@llvm_zlib//:__subpackages__",
-        "@local_config_cuda//:__subpackages__",
-        "@local_config_git//:__subpackages__",
-        "@local_config_rocm//:__subpackages__",
-        "@local_config_tensorrt//:__subpackages__",
-        "@local_execution_config_platform//:__subpackages__",
-        "@ml_dtypes//:__subpackages__",
-        "@nsync//:__subpackages__",
-        "@platforms//:__subpackages__",
-        "@pybind11//:__subpackages__",
-        "@snappy//:__subpackages__",
-        "//:__subpackages__",
-        "@zlib//:__subpackages__",
-        "@local_tsl//tsl:__subpackages__",
-        "@local_xla//xla:__subpackages__",
     ],
     deps = [
         ":common_utils",
@@ -1105,7 +1064,6 @@ pybind_extension(
         "//tensorflow/core/platform:logging",
         "//tensorflow/core/platform:status",
         "@local_xla//xla/stream_executor",
-        "@pybind11",
     ],
 )
 

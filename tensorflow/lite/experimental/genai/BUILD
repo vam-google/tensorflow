@@ -1,5 +1,5 @@
 # Custom Ops useful for GenAI models.
-load("//tensorflow:tensorflow.default.bzl", "pybind_extension")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 load("//tensorflow/lite:build_def.bzl", "tflite_copts")
 load("//tensorflow/lite:special_rules.bzl", "tflite_portable_test_suite")
 
@@ -73,13 +73,11 @@ pybind_extension(
     name = "pywrap_genai_ops",
     srcs = [
         "genai_ops_wrapper.cc",
+        "genai_ops.h",
     ],
-    hdrs = ["genai_ops.h"],
     additional_exported_symbols = ["GenAIOpsRegisterer"],
-    enable_stub_generation = True,
-    link_in_framework = True,
     module_name = "pywrap_genai_ops",
-    pytype_srcs = [
+    data = [
         "pywrap_genai_ops.pyi",
     ],
     visibility = ["//visibility:public"],
@@ -89,7 +87,6 @@ pybind_extension(
         "//tensorflow/lite:mutable_op_resolver",
         "//tensorflow/lite/c:common",
         "//third_party/python_runtime:headers",
-        "@pybind11",
     ],
 )
 

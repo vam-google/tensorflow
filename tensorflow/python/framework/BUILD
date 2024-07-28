@@ -2,6 +2,7 @@
 
 load("//tensorflow:pytype.default.bzl", "pytype_strict_library")
 load("//tensorflow:strict.default.bzl", "py_strict_library", "py_strict_test")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 # Placeholder: load py_proto_library
 load(
@@ -15,7 +16,7 @@ load(
     "tf_gen_op_wrapper_py",
     "tf_kernel_library",
 )
-load("//tensorflow:tensorflow.default.bzl", "cuda_py_strict_test", "tf_py_strict_test", "tf_python_framework_friends", "tf_python_pybind_extension")
+load("//tensorflow:tensorflow.default.bzl", "cuda_py_strict_test", "tf_py_strict_test", "tf_python_framework_friends")
 load("//tensorflow/core/platform:build_config.bzl", "pyx_library", "tf_additional_all_protos", "tf_additional_lib_deps", "tf_proto_library", "tf_protos_grappler")  # @unused
 load("//tensorflow/core/platform:build_config_root.bzl", "if_static", "tf_additional_xla_deps_py")
 load("//tensorflow/python/tpu:tpu.bzl", "tpu_py_strict_test")
@@ -23,6 +24,7 @@ load(
     "//tensorflow/tools/test:performance.bzl",
     "cuda_py_benchmark_test",
 )
+load("@local_xla//rules_pywrap:pywrap.bzl", "stripped_cc_info")
 
 visibility = tf_python_framework_friends()  # buildifier: disable=package-on-top
 
@@ -32,8 +34,8 @@ package(
     licenses = ["notice"],
 )
 
-tf_cc_shared_object(
-    name = "test_file_system.so",
+cc_library(
+    name = "test_file_system",
     srcs = ["test_file_system.cc"],
     copts = if_not_windows(["-Wno-sign-compare"]),
     linkopts = select({
@@ -44,9 +46,23 @@ tf_cc_shared_object(
         "//tensorflow:windows": [],
     }),
     deps = [
-        "//tensorflow/core:framework_headers_lib",
+        "//tensorflow/core:framework",
+        "//tensorflow/core/framework:reader_base",
         "@com_google_protobuf//:protobuf_headers",
         "@eigen_archive//:eigen3",
+    ],
+)
+
+stripped_cc_info(
+    name = "test_file_system_stripped",
+    deps = [":test_file_system"],
+)
+
+tf_cc_shared_object(
+    name = "test_file_system.so",
+    deps = [
+        "//tensorflow/python:_pywrap_tensorflow_common",
+        ":test_file_system_stripped"
     ],
 )
 
@@ -128,19 +144,17 @@ tf_cc_test(
     ],
 )
 
-tf_python_pybind_extension(
+pybind_extension(
     name = "_pywrap_python_op_gen",
     srcs = ["python_op_gen_wrapper.cc"],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_pywrap_python_op_gen.pyi",
     ],
     deps = [
-        "//tensorflow/python:python_op_gen_headers_lib",
+        "//tensorflow/python/framework:python_op_gen",
         "//tensorflow/python/lib/core:pybind11_absl",
         "//tensorflow/python/lib/core:pybind11_lib",
         "//third_party/python_runtime:headers",
-        "@pybind11",
     ],
 )
 
@@ -384,19 +398,18 @@ py_strict_library(
     ],
 )
 
-tf_python_pybind_extension(
+pybind_extension(
     name = "_dtypes",
     srcs = ["dtypes.cc"],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_dtypes.pyi",
     ],
     visibility = visibility + ["//third_party/py/tensorfn:__subpackages__"],
     deps = [
-        "//tensorflow/core:framework_headers_lib",
+        "//tensorflow/core:framework",
+        "//tensorflow/core/framework:reader_base",
         "//tensorflow/core:protos_all_cc",
         "@eigen_archive//:eigen3",
-        "@pybind11",
     ],
 )
 
@@ -648,16 +661,16 @@ py_strict_library(
     ],
 )
 
-tf_python_pybind_extension(
+pybind_extension(
     name = "_op_def_library_pybind",
     srcs = ["op_def_library_pybind.cc"],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_op_def_library_pybind.pyi",
     ],
     deps = [
-        ":op_def_util_headers",
-        "//tensorflow/core:framework_headers_lib",
+        ":op_def_util_cc",
+        "//tensorflow/core:framework",
+        "//tensorflow/core/framework:reader_base",
         "//tensorflow/core:lib_headers_for_pybind",
         "//tensorflow/core:lib_proto_parsing",
         "//tensorflow/core:protos_all_cc",
@@ -665,10 +678,11 @@ tf_python_pybind_extension(
         "//tensorflow/python/lib/core:safe_pyobject_ptr",
         "//third_party/python_runtime:headers",
         "@com_google_absl//absl/algorithm:container",
+        "@com_google_absl//absl/strings",
+    ],
+    private_deps = [
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
-        "@com_google_absl//absl/strings",
-        "@pybind11",
     ],
 )
 
@@ -683,18 +697,17 @@ pytype_strict_library(
     ],
 )
 
-tf_python_pybind_extension(
+pybind_extension(
     name = "_op_def_registry",
     srcs = ["op_def_registry.cc"],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_op_def_registry.pyi",
     ],
     deps = [
-        "//tensorflow/core:framework_headers_lib",
+        "//tensorflow/core:framework",
+        "//tensorflow/core/framework:reader_base",
         "//tensorflow/core:protos_all_cc",
         "//tensorflow/python/lib/core:pybind11_status",
-        "@pybind11",
     ],
 )
 
@@ -739,17 +752,15 @@ cc_library(
 )
 
 # Pybind extension used by py_context_manager_test.
-tf_python_pybind_extension(
+pybind_extension(
     name = "_py_context_manager",
     srcs = ["py_context_manager_pybind.cc"],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_py_context_manager.pyi",
     ],
     deps = [
         ":py_context_manager",
         "//third_party/python_runtime:headers",
-        "@pybind11",
     ],
 )
 
@@ -788,21 +799,19 @@ cc_library(
     ],
 )
 
-tf_python_pybind_extension(
+pybind_extension(
     name = "_op_def_util",
     srcs = ["op_def_util_pybind.cc"],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_op_def_util.pyi",
     ],
     deps = [
-        ":op_def_util_headers",
+        ":op_def_util_cc",
         "//tensorflow/core:lib_headers_for_pybind",
         "//tensorflow/core:protos_all_cc",
         "//tensorflow/python/lib/core:pybind11_lib",
         "//tensorflow/python/lib/core:safe_pyobject_ptr",
         "//third_party/python_runtime:headers",
-        "@pybind11",
     ],
 )
 
@@ -847,14 +856,10 @@ cc_library(
 )
 
 # Note: this target is only used by python_api_parameter_converter_test.
-tf_python_pybind_extension(
+pybind_extension(
     name = "_pywrap_python_api_parameter_converter",
-    srcs = ["python_api_parameter_converter_wrapper.cc"],
-    hdrs = [
-        "op_def_util.h",
-        "python_api_info.h",
-        "python_api_parameter_converter.h",
-        "python_tensor_converter.h",
+    srcs = [
+        "python_api_parameter_converter_wrapper.cc",
         "//tensorflow/c:headers",
         "//tensorflow/c/eager:pywrap_required_hdrs",
         "//tensorflow/c/experimental/ops:pywrap_required_hdrs",
@@ -868,17 +873,20 @@ tf_python_pybind_extension(
         "@local_xla//xla/tsl/distributed_runtime/coordination:pywrap_required_hdrs",
         "@local_xla//xla/tsl/python/lib/core:numpy_hdr",
     ],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_pywrap_python_api_parameter_converter.pyi",
     ],
     deps = [
+        ":python_api_parameter_converter",
+        ":python_api_info",
+        ":op_def_util_cc",
+        ":python_tensor_converter",
         "//tensorflow/c:pywrap_required_hdrs",
         "//tensorflow/core:framework",
         "//tensorflow/core:lib",
         "//tensorflow/core:lib_headers_for_pybind",
         "//tensorflow/core:protos_all_cc",
-        "//tensorflow/core/common_runtime:core_cpu_headers_lib",
+        "//tensorflow/core/common_runtime:core_cpu_lib",
         "//tensorflow/core/config:flags_headers",
         "//third_party/py/numpy:headers",
         "//third_party/python_runtime:headers",  # buildcleaner: keep
@@ -888,7 +896,6 @@ tf_python_pybind_extension(
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/types:optional",
         "@com_google_absl//absl/types:span",
-        "@pybind11",
     ] + if_static(
         extra_deps = [
             "//tensorflow/core/protobuf:eager_service_proto_cc",
@@ -897,10 +904,10 @@ tf_python_pybind_extension(
             "@local_tsl//tsl/protobuf:coordination_service_proto_cc",
         ],
         otherwise = [
-            "//tensorflow/core/protobuf:eager_service_proto_cc_headers_only",
-            "//tensorflow/core/protobuf:master_proto_cc_headers_only",
-            "//tensorflow/core/protobuf:worker_proto_cc_headers_only",
-            "@local_tsl//tsl/protobuf:coordination_service_proto_cc_headers_only",
+            "//tensorflow/core/protobuf:eager_service_proto_cc",
+            "//tensorflow/core/protobuf:master_proto_cc",
+            "//tensorflow/core/protobuf:worker_proto_cc",
+            "@local_tsl//tsl/protobuf:coordination_service_proto_cc",
         ],
     ),
 )
@@ -948,13 +955,10 @@ cc_library(
 )
 
 # Note: this target is only used by python_api_info_test.
-tf_python_pybind_extension(
+pybind_extension(
     name = "_pywrap_python_api_info",
-    srcs = ["python_api_info_wrapper.cc"],
-    hdrs = [
-        "op_def_util.h",
-        "python_api_info.h",
-        "python_tensor_converter.h",
+    srcs = [
+        "python_api_info_wrapper.cc",
         "//tensorflow/c:headers",
         "//tensorflow/c/eager:pywrap_required_hdrs",
         "//tensorflow/c/experimental/ops:pywrap_required_hdrs",
@@ -968,17 +972,19 @@ tf_python_pybind_extension(
         "@local_xla//xla/tsl/distributed_runtime/coordination:pywrap_required_hdrs",
         "@local_xla//xla/tsl/python/lib/core:numpy_hdr",
     ],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_pywrap_python_api_info.pyi",
     ],
     deps = [
+        ":python_api_info",
+        ":op_def_util_cc",
+        ":python_tensor_converter",
         "//tensorflow/c:pywrap_required_hdrs",
         "//tensorflow/core:framework",
         "//tensorflow/core:lib",
         "//tensorflow/core:lib_headers_for_pybind",
         "//tensorflow/core:protos_all_cc",
-        "//tensorflow/core/common_runtime:core_cpu_headers_lib",
+        "//tensorflow/core/common_runtime:core_cpu_lib",
         "//tensorflow/core/config:flags_headers",
         "//third_party/py/numpy:headers",
         "//third_party/python_runtime:headers",  # buildcleaner: keep
@@ -988,7 +994,6 @@ tf_python_pybind_extension(
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/types:optional",
         "@com_google_absl//absl/types:span",
-        "@pybind11",
     ] + if_static(
         extra_deps = [
             "@local_tsl//tsl/protobuf:coordination_service_proto_cc",
@@ -997,10 +1002,10 @@ tf_python_pybind_extension(
             "//tensorflow/core/protobuf:worker_proto_cc",
         ],
         otherwise = [
-            "@local_tsl//tsl/protobuf:coordination_service_proto_cc_headers_only",
-            "//tensorflow/core/protobuf:eager_service_proto_cc_headers_only",
-            "//tensorflow/core/protobuf:master_proto_cc_headers_only",
-            "//tensorflow/core/protobuf:worker_proto_cc_headers_only",
+            "@local_tsl//tsl/protobuf:coordination_service_proto_cc",
+            "//tensorflow/core/protobuf:eager_service_proto_cc",
+            "//tensorflow/core/protobuf:master_proto_cc",
+            "//tensorflow/core/protobuf:worker_proto_cc",
         ],
     ),
 )
@@ -1039,23 +1044,22 @@ cc_library(
     alwayslink = 1,
 )
 
-tf_python_pybind_extension(
+pybind_extension(
     name = "_pywrap_python_api_dispatcher",
-    srcs = ["python_api_dispatcher_wrapper.cc"],
-    hdrs = [
+    srcs = [
+        "python_api_dispatcher_wrapper.cc",
         "python_api_dispatcher.h",
         "//tensorflow/python/lib/core:safe_pyobject_ptr_required_hdrs",
     ],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_pywrap_python_api_dispatcher.pyi",
     ],
     deps = [
         "//tensorflow/python/util:function_parameter_canonicalizer_hdrs",
+        ":python_api_dispatcher",
         "//third_party/python_runtime:headers",  # buildcleaner: keep
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/strings",
-        "@pybind11",
     ],
 )
 
@@ -1094,10 +1098,10 @@ cc_library(
 )
 
 # Note: this target is only used by python_tensor_converter_test.
-tf_python_pybind_extension(
+pybind_extension(
     name = "_pywrap_python_tensor_converter",
-    srcs = ["python_tensor_converter_wrapper.cc"],
-    hdrs = [
+    srcs = [
+        "python_tensor_converter_wrapper.cc",
         "python_tensor_converter.h",
         "//tensorflow/c:headers",
         "//tensorflow/c/eager:pywrap_required_hdrs",
@@ -1112,8 +1116,7 @@ tf_python_pybind_extension(
         "@local_xla//xla/tsl/distributed_runtime/coordination:pywrap_required_hdrs",
         "@local_xla//xla/tsl/python/lib/core:numpy_hdr",
     ],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_pywrap_python_tensor_converter.pyi",
     ],
     deps = [
@@ -1122,7 +1125,7 @@ tf_python_pybind_extension(
         "//tensorflow/core:lib",
         "//tensorflow/core:lib_headers_for_pybind",
         "//tensorflow/core:protos_all_cc",
-        "//tensorflow/core/common_runtime:core_cpu_headers_lib",
+        "//tensorflow/core/common_runtime:core_cpu_lib",
         "//tensorflow/core/config:flags_headers",
         "//third_party/py/numpy:headers",
         "//third_party/python_runtime:headers",  # buildcleaner: keep
@@ -1132,7 +1135,6 @@ tf_python_pybind_extension(
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/types:optional",
         "@com_google_absl//absl/types:span",
-        "@pybind11",
     ] + if_static(
         extra_deps = [
             "@local_tsl//tsl/protobuf:coordination_service_proto_cc",
@@ -1141,10 +1143,10 @@ tf_python_pybind_extension(
             "//tensorflow/core/protobuf:worker_proto_cc",
         ],
         otherwise = [
-            "@local_tsl//tsl/protobuf:coordination_service_proto_cc_headers_only",
-            "//tensorflow/core/protobuf:eager_service_proto_cc_headers_only",
-            "//tensorflow/core/protobuf:master_proto_cc_headers_only",
-            "//tensorflow/core/protobuf:worker_proto_cc_headers_only",
+            "@local_tsl//tsl/protobuf:coordination_service_proto_cc",
+            "//tensorflow/core/protobuf:eager_service_proto_cc",
+            "//tensorflow/core/protobuf:master_proto_cc",
+            "//tensorflow/core/protobuf:worker_proto_cc",
         ],
     ),
 )
@@ -2247,15 +2249,13 @@ py_strict_library(
     ],
 )
 
-tf_python_pybind_extension(
+pybind_extension(
     name = "_python_memory_checker_helper",
     srcs = ["python_memory_checker_helper.cc"],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_python_memory_checker_helper.pyi",
     ],
     deps = [
-        "@pybind11",
     ],
 )
 
@@ -3033,15 +3033,13 @@ tf_py_strict_test(
     ],
 )
 
-tf_python_pybind_extension(
+pybind_extension(
     name = "_memory_checker_test_helper",
     srcs = ["memory_checker_test_helper.cc"],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_memory_checker_test_helper.pyi",
     ],
     deps = [
-        "@pybind11",
     ],
 )
 
@@ -3108,11 +3106,10 @@ tf_proto_library(
     visibility = ["//tensorflow:internal"],
 )
 
-tf_python_pybind_extension(
+pybind_extension(
     name = "_errors_test_helper",
     srcs = ["errors_test_helper.cc"],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_errors_test_helper.pyi",
     ],
     deps = [
@@ -3121,7 +3118,6 @@ tf_python_pybind_extension(
         "//tensorflow/python/lib/core:pybind11_status",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings:cord",
-        "@pybind11",
     ],
 )
 
@@ -3225,11 +3221,10 @@ cuda_py_benchmark_test(
     ],
 )
 
-tf_python_pybind_extension(
+pybind_extension(
     name = "_proto_comparators",
     srcs = ["proto_comparators.cc"],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_proto_comparators.pyi",
     ],
     deps = [
@@ -3239,7 +3234,6 @@ tf_python_pybind_extension(
         "//tensorflow/core/platform:protobuf",
         "//tensorflow/python/lib/core:pybind11_status",
         "//third_party/python_runtime:headers",  # buildcleaner: keep
-        "@pybind11",
     ],
 )
 
@@ -3288,17 +3282,15 @@ py_strict_test(
     ],
 )
 
-tf_python_pybind_extension(
+pybind_extension(
     name = "_test_metrics_util",
     srcs = ["test_metrics_util.cc"],
-    enable_stub_generation = True,
-    pytype_srcs = [
+    data = [
         "_test_metrics_util.pyi",
     ],
     deps = [
         "//tensorflow/core:framework",
         "//third_party/python_runtime:headers",
-        "@pybind11",
     ],
 )
 

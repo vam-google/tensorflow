@@ -6,8 +6,9 @@ load(
     "tf_gen_op_wrapper_py",
     "tf_opts_nortti_if_android",
 )
-load("//tensorflow:tensorflow.default.bzl", "pybind_extension", "tf_custom_op_py_strict_library")
+load("//tensorflow:tensorflow.default.bzl", "tf_custom_op_py_strict_library")
 load("//tensorflow/lite:build_def.bzl", "tf_to_tflite", "tflite_copts")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -172,12 +173,10 @@ pybind_extension(
     name = "_pywrap_test_registerer",
     srcs = [
         "test_registerer_wrapper.cc",
+        "test_registerer.h",
     ],
-    hdrs = ["test_registerer.h"],
     additional_exported_symbols = ["TF_TestRegisterer"],
-    enable_stub_generation = True,
-    link_in_framework = True,
-    pytype_srcs = [
+    data = [
         "_pywrap_test_registerer.pyi",
     ],
     deps = [
@@ -185,6 +184,5 @@ pybind_extension(
         "//tensorflow/lite:framework",
         "//tensorflow/lite/kernels:builtin_ops",
         "//third_party/python_runtime:headers",
-        "@pybind11",
     ],
 )

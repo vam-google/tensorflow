@@ -1,4 +1,5 @@
-load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable", "pybind_extension")
+load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -80,8 +81,8 @@ pybind_extension(
     name = "_pywrap_tensorflow_interpreter_wrapper",
     srcs = [
         "interpreter_wrapper_pybind11.cc",
+        "interpreter_wrapper.h",
     ],
-    hdrs = ["interpreter_wrapper.h"],
     additional_stubgen_deps = [
         "//third_party/py/numpy:numpy",
     ],
@@ -97,7 +98,6 @@ pybind_extension(
         "//tensorflow/lite/core:framework_stable",
         "//tensorflow/python/lib/core:pybind11_lib",
         "//third_party/python_runtime:headers",
-        "@pybind11",
     ] + select({
         ":tflite_pip_with_flex": ["//tensorflow/lite/delegates/flex:delegate"],
         "//conditions:default": [],

@@ -10,7 +10,6 @@ package(
 # Filesystem implementation for Windows environment
 tf_cc_shared_object(
     name = "windows_filesystem.dll",
-    framework_so = [],
     linkstatic = False,
     tags = [
         "manual",

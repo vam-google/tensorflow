@@ -5,9 +5,10 @@ load("//tensorflow:pytype.default.bzl", "pytype_strict_library")
 load("//tensorflow:strict.default.bzl", "py_strict_library", "py_strict_test")
 
 # Placeholder: load py_proto_library
-load("//tensorflow:tensorflow.default.bzl", "tf_py_strict_test", "tf_python_pybind_extension")
+load("//tensorflow:tensorflow.default.bzl", "tf_py_strict_test")
 load("//tensorflow/core/platform:build_config.bzl", "tf_proto_library")
 load("//tensorflow/python/tpu:tpu.bzl", "internal_create_sanitizer_settings", "tpu_py_strict_test")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 # Do not add anymore paths here. You do not need to be in the visibility list
 # to use TPU symbols. They are accessible from tf.contrib.tpu in TF 1.x and
@@ -1018,40 +1019,42 @@ tf_proto_library(
 # )
 # copybara:uncomment_end
 
-tf_python_pybind_extension(
+
+pybind_extension(
     name = "_pywrap_sparse_core_layout",
     srcs = ["pywrap_sparse_core_layout.cc"],
-    enable_stub_generation = True,
-    features = ["-layering_check"],
-    pytype_srcs = [
+    #features = ["-layering_check"],
+    data = [
         "_pywrap_sparse_core_layout.pyi",
     ],
     deps = [
-        "//tensorflow/core/tpu/kernels:_pywrap_sparse_core_layout_header_only",
+        "//tensorflow/core/tpu/kernels:sparse_core_layout",
         "//tensorflow/python/lib/core:pybind11_lib",
         "//tensorflow/python/lib/core:pybind11_status",
         "//tensorflow/python/lib/core:pybind11_status_headers",
         "//third_party/python_runtime:headers",  # buildcleaner: keep
-        "@pybind11",
+    ],
+    private_deps = [
         "@pybind11_abseil//pybind11_abseil:status_casters",
         "@pybind11_protobuf//pybind11_protobuf:native_proto_caster",
     ],
 )
 
-tf_python_pybind_extension(
+
+pybind_extension(
     name = "_pywrap_tpu_embedding",
     srcs = ["pywrap_tpu_embedding.cc"],
-    enable_stub_generation = True,
-    features = ["-layering_check"],
-    pytype_srcs = [
+#    features = ["-layering_check"],
+    data = [
         "_pywrap_tpu_embedding.pyi",
     ],
     deps = [
         "//tensorflow/core/tpu/kernels:sparse_core_ops_utils",
         "//tensorflow/python/lib/core:pybind11_lib",
         "//third_party/python_runtime:headers",  # buildcleaner: keep
-        "@pybind11",
     ],
+    private_deps = [
+    ]
 )
 
 py_strict_library(

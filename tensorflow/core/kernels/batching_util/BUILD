@@ -197,6 +197,7 @@ cc_library(
         ":batch_scheduler_utils",
         ":periodic_function_dynamic",
         "//tensorflow/core:framework_lite",
+        "//tensorflow/core/framework:reader_base",
         "//tensorflow/core:lib",
         "//tensorflow/core:lib_proto_parsing",
         "//tensorflow/core:portable_gif_internal",
@@ -377,7 +378,7 @@ cc_library(
     hdrs = ["bounded_executor.h"],
     deps = [
         "//tensorflow/core:framework",
-        "//tensorflow/core:framework_headers_lib",
+        "//tensorflow/core/framework:reader_base",
         "//tensorflow/core:lib",
         "//tensorflow/core/platform:errors",
         "//tensorflow/core/platform:status",

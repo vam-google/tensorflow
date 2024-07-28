@@ -1,8 +1,9 @@
 load("//tensorflow:tensorflow.bzl", "tf_opts_nortti_if_android")
-load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable", "pybind_extension")
+load("//tensorflow:tensorflow.default.bzl", "get_compatible_with_portable")
 load("//tensorflow/lite:build_def.bzl", "tflite_combine_cc_tests", "tflite_copts", "tflite_self_contained_libs_test_suite")
 load("//tensorflow/lite:special_rules.bzl", "tflite_portable_test_suite_combined")
 load("//tensorflow/lite/core/shims:cc_library_with_tflite.bzl", "cc_library_with_tflite")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -954,7 +955,6 @@ pybind_extension(
         "//tensorflow/lite:framework_stable",
         "//tensorflow/lite:mutable_op_resolver",
         "//third_party/python_runtime:headers",
-        "@pybind11",
     ],
 )
 

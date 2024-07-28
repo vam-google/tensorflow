@@ -1,5 +1,5 @@
 load("//tensorflow:strict.default.bzl", "py_strict_test")
-load("//tensorflow:tensorflow.default.bzl", "pybind_extension")
+load("@local_xla//rules_pywrap:pywrap.bzl", "pybind_extension")
 
 pybind_extension(
     name = "register_list_ops_py",
@@ -12,7 +12,6 @@ pybind_extension(
     deps = [
         "//tensorflow/lite:mutable_op_resolver",
         "//tensorflow/lite/kernels/variants:list_ops_lib",
-        "@pybind11",
     ],
 )
 

@@ -27,8 +27,6 @@
 # Other build options:
 #     short_logs:       Only log errors during build, skip warnings.
 #     verbose_logs:     Show all compiler warnings during build.
-#     monolithic:       Build all TF C++ code into a single shared object.
-#     dynamic_kernels:  Try to link all kernels dynamically (experimental).
 #     dbg:              Build with debug info
 #
 # TF version options;
@@ -69,12 +67,6 @@
 #     release_cpu_windows:             Toolchain and CUDA options for Windows CPU builds.
 
 # Default build options. These are applied first and unconditionally.
-
-# For projects which use TensorFlow as part of a Bazel build process, putting
-# nothing in a bazelrc will default to a monolithic build. The following line
-# opts in to modular op registration support by default.
-build --define framework_shared_object=true
-build --define tsl_protobuf_header_only=true
 
 build --define=use_fast_cpp_protos=true
 build --define=allow_oversize_protos=true
@@ -182,14 +174,6 @@ build:ios_x86_64 --cpu=ios_x86_64
 build:ios_fat --config=ios
 build:ios_fat --ios_multi_cpus=armv7,arm64,i386,x86_64
 
-# Config to use a mostly-static build and disable modular op registration
-# support (this will revert to loading TensorFlow with RTLD_GLOBAL in Python).
-# By default, TensorFlow will build with a dependence on
-# //tensorflow:libtensorflow_framework.so.
-build:monolithic --define framework_shared_object=false
-build:monolithic --define tsl_protobuf_header_only=false
-build:monolithic --experimental_link_static_libraries_once=false  # b/229868128
-
 # Please note that MKL on MacOS is still not supported.
 # If you would like to use a local MKL instead of downloading, please set the
 # environment variable "TF_MKL_ROOT" every time before build.
@@ -273,7 +257,6 @@ build:dbg --copt -DDEBUG_BUILD
 
 # Config to build TF TPU
 build:tpu --define=with_tpu_support=true
-build:tpu --define=framework_shared_object=true
 build:tpu --copt=-DLIBTPU_ON_GCE
 build:tpu --define=enable_mlir_bridge=true
 
@@ -292,10 +275,6 @@ build:sycl --repo_env TF_NEED_SYCL=1
 # Options to disable default on features
 build:nogcp --define=no_gcp_support=true
 build:nonccl --define=no_nccl_support=true
-
-# Modular TF build options
-build:dynamic_kernels --define=dynamic_loaded_kernels=true
-build:dynamic_kernels --copt=-DAUTOLOAD_DYNAMIC_KERNELS
 
 # Don't trigger --config=<host platform> when cross-compiling.
 build:android --noenable_platform_specific_config
@@ -380,12 +359,6 @@ build:macos --cxxopt=-std=c++17
 build:macos --host_cxxopt=-std=c++17
 build:windows --cxxopt=/std:c++17
 build:windows --host_cxxopt=/std:c++17
-
-# On windows, we still link everything into a single DLL.
-build:windows --config=monolithic
-
-# On linux, we dynamically link small amount of kernels
-build:linux --config=dynamic_kernels
 
 # Make sure to include as little of windows.h as possible
 build:windows --copt=-DWIN32_LEAN_AND_MEAN
@@ -618,10 +591,10 @@ build:release_linux_base --action_env PYTHON_BIN_PATH="/usr/bin/python3"
 build:release_linux_base --action_env PYTHON_LIB_PATH="/usr/lib/tf_python"
 build:release_linux_base --python_path="/usr/bin/python3"
 # Set Clang as compiler. Use the actual path to clang installed in container.
-build:release_cpu_linux_base --repo_env=CC="/usr/lib/llvm-18/bin/clang"
-build:release_cpu_linux_base --repo_env=BAZEL_COMPILER="/usr/lib/llvm-18/bin/clang"
+build:release_cpu_linux_base --repo_env=CC="/usr/lib/llvm-17/bin/clang"
+build:release_cpu_linux_base --repo_env=BAZEL_COMPILER="/usr/lib/llvm-17/bin/clang"
 # Test-related settings below this point.
-test:release_linux_base --build_tests_only --keep_going --test_output=errors --verbose_failures=true
+test:release_linux_base --build_tests_only --test_output=errors --verbose_failures=true
 test:release_linux_base --local_test_jobs=HOST_CPUS
 test:release_linux_base --test_env=LD_LIBRARY_PATH
 # Give only the list of failed tests at the end of the log
@@ -927,3 +900,40 @@ test:rbe_cross_compile_macos_x86 --jobs=100
 
 # Try to load the XLA warnings config if available
 try-import %workspace%/warnings.bazelrc
+
+
+build --symlink_prefix=/usr/local/google/home/vam/_/projects/github/vam-google/tensorflow_symlinks/bazel-
+build --keep_going
+
+#test:pycpp_filters --test_tag_filters=-no_oss,-oss_excluded,-oss_serial,-gpu,-tpu,-benchmark-test,-v1only
+#test:pycpp_filters --build_tag_filters=-no_oss,-oss_excluded,-oss_serial,-gpu,-tpu,-benchmark-test,-v1only
+#test:pycpp_filters --test_lang_filters=cc,py --test_size_filters=small,medium
+#build:pycpp_filters --test_tag_filters=-no_oss,-oss_excluded,-oss_serial,-gpu,-tpu,-benchmark-test,-v1only
+#build:pycpp_filters --build_tag_filters=-no_oss,-oss_excluded,-oss_serial,-gpu,-tpu,-benchmark-test,-v1only
+#build:pycpp_filters --test_lang_filters=cc,py --test_size_filters=small,medium
+## build:pycpp_filters --deleted_packages=tensorflow/python/integration_testing,tensorflow/compiler/tf2tensorrt,tensorflow/compiler/xrt,tensorflow/core/tpu,tensorflow/lite
+#
+#test:pycpp --config=pycpp_filters -- //tensorflow/... -//tensorflow/python/integration_testing/... -//tensorflow/compiler/tf2tensorrt/... -//tensorflow/compiler/xrt/... -//tensorflow/core/tpu/... -//tensorflow/lite/... -//tensorflow/tools/toolchains/...
+#
+#build --config=pycpp_filters
+#build --experimental_convenience_symlinks=clean
+#
+#build:pycpp_filters_win --nodistinct_host_configuration
+#build:pycpp_filters_win --dynamic_mode=off
+#build:pycpp_filters_win --config=xla
+#build:pycpp_filters_win --config=short_logs
+#build:pycpp_filters_win --announce_rc
+#build:pycpp_filters_win --build_tag_filters=-no_windows,-no_oss
+#
+#build:pycpp_filters_win --keep_going
+#build:pycpp_filters_win --verbose_failures
+#build:pycpp_filters_win --copt=/d2ReducedOptimizeHugeFunctions
+#build:pycpp_filters_win --host_copt=/d2ReducedOptimizeHugeFunctions
+#build:pycpp_filters_win --enable_runfiles
+#build:pycpp_filters_win --test_timeout="300,450,1200,3600"
+#test:pycpp_filters_win --flaky_test_attempts=1
+#build:pycpp_filters_win --nobuild_python_zip
+#test:pycpp_filters_win --test_tag_filters=-no_windows,-no_oss,-gpu,-tpu
+#
+##build --config=pycpp_filters_win
+##test --config=pycpp_filters_win
