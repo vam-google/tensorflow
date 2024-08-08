@@ -7,6 +7,9 @@ load("//tensorflow:tensorflow.bzl", "tf_cc_shared_object")
 load("//tensorflow:tensorflow.default.bzl", "tf_py_strict_test")
 load("//tensorflow/core/platform:build_config.bzl", "tf_additional_all_protos", "tf_proto_library")
 load("//tensorflow/core/platform:build_config_root.bzl", "if_static")
+load("@local_tsl//third_party/py/rules_pywrap:pywrap.bzl", "stripped_cc_info")
+load("//tensorflow:tensorflow.bzl", "if_oss")
+load("//tensorflow/core/platform:build_config_root.bzl", "if_pywrap")
 
 package(
     # copybara:uncomment default_applicable_licenses = ["//tensorflow:license"],
@@ -22,10 +25,7 @@ tf_py_strict_test(
     name = "decode_proto_op_test",
     size = "small",
     srcs = ["decode_proto_op_test.py"],
-    data = if_static(
-        [],
-        otherwise = [":libtestexample.so"],
-    ),
+    data = if_oss([":libtestexample.so"]),
     python_version = "PY3",
     tags = [
         "no_pip",  # TODO(b/78026780)
@@ -43,10 +43,7 @@ tf_py_strict_test(
     name = "encode_proto_op_test",
     size = "small",
     srcs = ["encode_proto_op_test.py"],
-    data = if_static(
-        [],
-        otherwise = [":libtestexample.so"],
-    ),
+    data = if_oss([":libtestexample.so"]),
     python_version = "PY3",
     tags = [
         "no_pip",  # TODO(b/78026780)
@@ -119,9 +116,20 @@ tf_proto_library(
 tf_cc_shared_object(
     name = "libtestexample.so",
     linkstatic = 1,
-    deps = [
-        ":test_example_proto_cc",
-    ],
+    deps = if_pywrap(
+        if_true = [
+            "//tensorflow/python:_pywrap_tensorflow_common",
+            ":test_example_proto_cc_stripped",
+        ],
+        if_false = [
+            ":test_example_proto_cc"
+        ]
+    ),
+)
+
+stripped_cc_info(
+    name = "test_example_proto_cc_stripped",
+    deps = [":test_example_proto_cc"],
 )
 
 py_strict_library(
