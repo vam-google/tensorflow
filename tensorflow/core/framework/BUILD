@@ -1566,6 +1566,7 @@ tf_proto_library(
         ":types_proto",
         ":versions_proto",
     ],
+    visibility = ["//visibility:public"],
 )
 
 tf_proto_library(
@@ -1797,6 +1798,10 @@ tf_proto_library(
         ":tensor_proto",
         ":tensor_shape_proto",
         ":types_proto",
+    ],
+    visibility = [
+        "//tensorflow/core:__subpackages__",
+        "//tensorflow/python:__pkg__",
     ],
 )
 
