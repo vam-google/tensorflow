@@ -6,6 +6,7 @@ load("@com_google_benchmark//:bazel/benchmark_deps.bzl", "benchmark_deps")
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_repositories")
 load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
 load("//third_party/android:android_configure.bzl", "android_configure")
+load("@com_google_protobuf//bazel:system_python.bzl", "system_python")
 
 # buildifier: disable=unnamed-macro
 def workspace(with_rules_cc = True):
@@ -30,6 +31,11 @@ def workspace(with_rules_cc = True):
     )
 
     android_configure(name = "local_config_android")
+
+    system_python(
+        name = "system_python",
+        minimum_python_version = "3.9",
+    )
 
     grpc_deps()
     benchmark_deps()

@@ -114,5 +114,12 @@ void StringErrorCollector::AddWarning(int line, int column,
   AddError(line, column, message);
 }
 
+void StringErrorCollector::RecordError(int line,
+                                       google::protobuf::io::ColumnNumber column,
+                                       absl::string_view message) {
+  string msg(message);
+  AddError(line, column, msg);
+}
+
 }  // namespace proto_utils
 }  // namespace tensorflow

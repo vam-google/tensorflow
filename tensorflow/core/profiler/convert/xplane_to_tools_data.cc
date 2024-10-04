@@ -218,7 +218,7 @@ absl::StatusOr<std::string> ConvertMultiXSpacesToPodViewer(
 
   std::string json_output;
   protobuf::util::JsonPrintOptions opts;
-  opts.always_print_primitive_fields = true;
+  opts.always_print_fields_with_no_presence = true;
   auto encode_status = protobuf::util::MessageToJsonString(
       ConvertOpStatsToPodViewer(combined_op_stats), &json_output, opts);
   if (!encode_status.ok()) {
@@ -272,7 +272,7 @@ absl::StatusOr<std::string> ConvertMultiXSpacesToOpProfileViewer(
       profile);
   std::string json_output;
   protobuf::util::JsonPrintOptions opts;
-  opts.always_print_primitive_fields = true;
+  opts.always_print_fields_with_no_presence = true;
 
   auto encode_status =
       protobuf::util::MessageToJsonString(profile, &json_output, opts);

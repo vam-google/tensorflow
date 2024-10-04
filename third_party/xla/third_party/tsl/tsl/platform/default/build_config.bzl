@@ -21,6 +21,7 @@ def well_known_proto_libs():
         "@com_google_protobuf//:compiler_plugin_proto",
         "@com_google_protobuf//:descriptor_proto",
         "@com_google_protobuf//:duration_proto",
+        "@com_google_protobuf//:cpp_features_proto",
         "@com_google_protobuf//:empty_proto",
         "@com_google_protobuf//:field_mask_proto",
         "@com_google_protobuf//:source_context_proto",
@@ -197,11 +198,13 @@ def cc_proto_library(
 
     genproto_deps = ([s + "_genproto" for s in protolib_deps] +
                      ["@com_google_protobuf//:cc_wkt_protos_genproto"])
+    name_genproto = protolib_name + "_genproto"
+
     if internal_bootstrap_hack:
         # For pre-checked-in generated files, we add the internal_bootstrap_hack
         # which will skip the codegen action.
         proto_gen(
-            name = protolib_name + "_genproto",
+            name = name_genproto,
             srcs = srcs,
             includes = includes,
             protoc = protoc,
@@ -228,10 +231,9 @@ def cc_proto_library(
     outs = gen_srcs + gen_hdrs
 
     proto_gen(
-        name = protolib_name + "_genproto",
+        name = name_genproto,
         srcs = srcs,
-        outs = outs,
-        gen_cc = 1,
+        langs = ["cpp"],
         includes = includes,
         plugin = grpc_cpp_plugin,
         plugin_language = "grpc",
@@ -265,8 +267,8 @@ def cc_proto_library(
 
     native.cc_library(
         name = impl_name,
-        srcs = gen_srcs,
-        hdrs = gen_hdrs,
+        srcs = [name_genproto],
+        hdrs = [name_genproto],
         deps = cc_libs + deps,
         includes = includes,
         alwayslink = 1,
@@ -274,10 +276,8 @@ def cc_proto_library(
     )
     native.cc_library(
         name = header_only_name,
-        deps = [
-            "@com_google_protobuf//:protobuf_headers",
-        ] + header_only_deps + if_tsl_link_protobuf([impl_name]),
-        hdrs = gen_hdrs,
+        deps = _protobuf_header_deps() + header_only_deps + if_tsl_link_protobuf([impl_name]),
+        hdrs = [name_genproto],
         **kwargs
     )
 
@@ -408,8 +408,8 @@ def py_proto_library(
     proto_gen(
         name = name + "_genproto",
         srcs = srcs,
-        outs = outs,
-        gen_py = 1,
+#        outs = outs,
+        langs = ["python"],
         includes = includes,
         plugin = grpc_python_plugin,
         plugin_language = "grpc",
@@ -423,7 +423,7 @@ def py_proto_library(
 
     native.py_library(
         name = name,
-        srcs = outs + py_extra_srcs,
+        srcs = [name + "_genproto"] + py_extra_srcs,
         deps = py_libs + deps,
         imports = includes,
         **kwargs
@@ -503,10 +503,7 @@ def tf_proto_library_cc(
         protolib_name = name,
         testonly = testonly,
         srcs = srcs,
-        cc_libs = cc_libs + if_tsl_link_protobuf(
-            ["@com_google_protobuf//:protobuf"],
-            ["@com_google_protobuf//:protobuf_headers"],
-        ),
+        cc_libs = cc_libs + tsl_protobuf_deps(),
         copts = if_not_windows([
             "-Wno-unknown-warning-option",
             "-Wno-unused-but-set-variable",
@@ -760,9 +757,93 @@ def tf_protobuf_deps():
         otherwise = [clean_dep("@com_google_protobuf//:protobuf_headers")],
     )
 
+def _protobuf_deps():
+    return [
+        "@com_google_protobuf//:protobuf",
+        "@com_google_protobuf//src/google/protobuf/io:io",
+        "@com_google_protobuf//src/google/protobuf/stubs:stubs",
+        "@com_google_protobuf//:differencer",
+        "@com_google_protobuf//:json",
+        "@com_google_protobuf//:json_util",
+        "@com_google_protobuf//:field_mask_util",
+        "@com_google_protobuf//:time_util",
+        "@com_google_protobuf//:type_resolver",
+
+        "@com_google_absl//absl/algorithm:container",
+        "@com_google_absl//absl/base",
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/base:dynamic_annotations",
+        "@com_google_absl//absl/container:btree",
+        "@com_google_absl//absl/container:fixed_array",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_absl//absl/container:flat_hash_set",
+        "@com_google_absl//absl/functional:any_invocable",
+        "@com_google_absl//absl/functional:function_ref",
+        "@com_google_absl//absl/hash",
+        "@com_google_absl//absl/log:absl_check",
+        "@com_google_absl//absl/log:absl_log",
+        "@com_google_absl//absl/memory",
+        "@com_google_absl//absl/numeric:bits",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/strings:cord",
+        "@com_google_absl//absl/strings:internal",
+        "@com_google_absl//absl/strings:str_format",
+        "@com_google_absl//absl/synchronization",
+        "@com_google_absl//absl/time",
+        "@com_google_absl//absl/types:optional",
+        "@com_google_absl//absl/types:span",
+        "@com_google_absl//absl/types:variant",
+        "@com_google_absl//absl/utility:if_constexpr",
+    ]
+
+
+def _protobuf_header_deps():
+    return [
+        "@com_google_protobuf//:protobuf_headers",
+        "@com_google_protobuf//src/google/protobuf/io:io_headers",
+        "@com_google_protobuf//src/google/protobuf/stubs:stubs_headers",
+        "@com_google_protobuf//src/google/protobuf/util:differencer_headers",
+        "@com_google_protobuf//src/google/protobuf/json:json_headers",
+        "@com_google_protobuf//src/google/protobuf/util:json_util_headers",
+        "@com_google_protobuf//src/google/protobuf/util:field_mask_util_headers",
+        "@com_google_protobuf//src/google/protobuf/util:time_util_headers",
+        "@com_google_protobuf//src/google/protobuf/util:type_resolver_headers",
+
+        "@com_google_absl//absl/algorithm:container",
+        "@com_google_absl//absl/base",
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/base:dynamic_annotations",
+        "@com_google_absl//absl/container:btree",
+        "@com_google_absl//absl/container:fixed_array",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_absl//absl/container:flat_hash_set",
+        "@com_google_absl//absl/functional:any_invocable",
+        "@com_google_absl//absl/functional:function_ref",
+        "@com_google_absl//absl/hash",
+        "@com_google_absl//absl/log:absl_check",
+        "@com_google_absl//absl/log:absl_log",
+        "@com_google_absl//absl/memory",
+        "@com_google_absl//absl/numeric:bits",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/strings:cord",
+        "@com_google_absl//absl/strings:internal",
+        "@com_google_absl//absl/strings:str_format",
+        "@com_google_absl//absl/synchronization",
+        "@com_google_absl//absl/time",
+        "@com_google_absl//absl/types:optional",
+        "@com_google_absl//absl/types:span",
+        "@com_google_absl//absl/types:variant",
+        "@com_google_absl//absl/utility:if_constexpr",
+    ]
+
+
 # Link protobuf, unless the tsl_link_protobuf build flag is explicitly set to false.
 def tsl_protobuf_deps():
-    return if_tsl_link_protobuf([clean_dep("@com_google_protobuf//:protobuf")], [clean_dep("@com_google_protobuf//:protobuf_headers")])
+    return if_tsl_link_protobuf(_protobuf_deps(), _protobuf_header_deps())
 
 # When tsl_protobuf_header_only is true, we need to add the protobuf library
 # back into our binaries explicitly.

@@ -529,7 +529,7 @@ void ProcessMemoryProfileProto(int64_t max_num_snapshots,
 template <typename Proto>
 Status ConvertProtoToJson(const Proto& proto_output, std::string* json_output) {
   protobuf::util::JsonPrintOptions json_options;
-  json_options.always_print_primitive_fields = true;
+  json_options.always_print_fields_with_no_presence = true;
   auto status = protobuf::util::MessageToJsonString(proto_output, json_output,
                                                     json_options);
   if (!status.ok()) {

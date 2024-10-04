@@ -53,10 +53,13 @@ class StringErrorCollector : public protobuf::io::ErrorCollector {
   StringErrorCollector& operator=(const StringErrorCollector&) = delete;
 
   // Implementation of protobuf::io::ErrorCollector::AddError.
-  void AddError(int line, int column, const string& message) override;
+  void AddError(int line, int column, const string& message);
 
   // Implementation of protobuf::io::ErrorCollector::AddWarning.
-  void AddWarning(int line, int column, const string& message) override;
+  void AddWarning(int line, int column, const string& message);
+
+  void RecordError(int line, google::protobuf::io::ColumnNumber column,
+                   absl::string_view message) override;
 
  private:
   string* const error_text_;
