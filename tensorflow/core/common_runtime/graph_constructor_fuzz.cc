@@ -114,12 +114,9 @@ class EmptyErrorCollector : public protobuf::io::ErrorCollector {
  public:
   EmptyErrorCollector() {}
   ~EmptyErrorCollector() override {}
-  void AddError(int line, int column, const std::string& message) override {
-    // log error
-  }
-  void AddWarning(int line, int column, const std::string& message) override {
-    // log warning
-  }
+  void RecordError(int line,
+                   google::protobuf::io::ColumnNumber column,
+                   absl::string_view message) override {}
 };
 
 std::vector<std::string> ops = {

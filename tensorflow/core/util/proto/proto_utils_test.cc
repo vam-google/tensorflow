@@ -63,38 +63,38 @@ TEST(ParseTextFormatFromStringTest, DiesOnNullOutputPointer) {
 TEST(StringErrorCollectorTest, AppendsError) {
   string err;
   StringErrorCollector collector(&err);
-  collector.AddError(1, 2, "foo");
+  collector.RecordError(1, 2, "foo");
   EXPECT_EQ("1(2): foo\n", err);
 }
 
 TEST(StringErrorCollectorTest, AppendsWarning) {
   string err;
   StringErrorCollector collector(&err);
-  collector.AddWarning(1, 2, "foo");
+  collector.RecordWarning(1, 2, "foo");
   EXPECT_EQ("1(2): foo\n", err);
 }
 
 TEST(StringErrorCollectorTest, AppendsMultipleError) {
   string err;
   StringErrorCollector collector(&err);
-  collector.AddError(1, 2, "foo");
-  collector.AddError(3, 4, "bar");
+  collector.RecordError(1, 2, "foo");
+  collector.RecordError(3, 4, "bar");
   EXPECT_EQ("1(2): foo\n3(4): bar\n", err);
 }
 
 TEST(StringErrorCollectorTest, AppendsMultipleWarning) {
   string err;
   StringErrorCollector collector(&err);
-  collector.AddWarning(1, 2, "foo");
-  collector.AddWarning(3, 4, "bar");
+  collector.RecordWarning(1, 2, "foo");
+  collector.RecordWarning(3, 4, "bar");
   EXPECT_EQ("1(2): foo\n3(4): bar\n", err);
 }
 
 TEST(StringErrorCollectorTest, OffsetWorks) {
   string err;
   StringErrorCollector collector(&err, true);
-  collector.AddError(1, 2, "foo");
-  collector.AddWarning(3, 4, "bar");
+  collector.RecordError(1, 2, "foo");
+  collector.RecordWarning(3, 4, "bar");
   EXPECT_EQ("2(3): foo\n4(5): bar\n", err);
 }
 
@@ -104,8 +104,8 @@ TEST(StringErrorCollectorTest, DiesOnNullErrorText) {
 #else
   // Under NDEBUG we don't die and instead AddError/AddWarning just do nothing.
   StringErrorCollector collector(nullptr);
-  collector.AddError(1, 2, "foo");
-  collector.AddWarning(3, 4, "bar");
+  collector.RecordError(1, 2, "foo");
+  collector.RecordWarning(3, 4, "bar");
 #endif
 }
 

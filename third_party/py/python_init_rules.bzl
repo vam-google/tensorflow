@@ -5,13 +5,13 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 def python_init_rules():
     http_archive(
         name = "rules_python",
-        sha256 = "62ddebb766b4d6ddf1712f753dac5740bea072646f630eb9982caa09ad8a7687",
-        strip_prefix = "rules_python-0.39.0",
-        url = "https://github.com/bazelbuild/rules_python/releases/download/0.39.0/rules_python-0.39.0.tar.gz",
+        sha256 = "2cc26bbd53854ceb76dd42a834b1002cd4ba7f8df35440cf03482e045affc244",
+        strip_prefix = "rules_python-1.3.0",
+        url = "https://github.com/bazel-contrib/rules_python/archive/refs/tags/1.3.0.tar.gz",
         patch_args = ["-p1"],
-        patches = [
-            Label("//third_party/py:rules_python1.patch"),
-            Label("//third_party/py:rules_python2.patch"),
-            Label("//third_party/py:rules_python3.patch"),
-        ],
     )
+
+#    native.local_repository(
+#        name = "rules_python",
+#        path = "/usr/local/google/home/vam/_/projects/github/vam-google/rules_python",
+#    )

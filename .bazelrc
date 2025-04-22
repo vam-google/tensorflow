@@ -91,6 +91,14 @@ build --define=allow_oversize_protos=true
 build --spawn_strategy=standalone
 build -c opt
 
+build --copt=-DGRPC_BAZEL_BUILD
+build --host_copt=-DGRPC_BAZEL_BUILD
+build --action_env=GRPC_BAZEL_RUNTIME=1
+build --repo_env=PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=upb
+build --action_env=PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=upb
+# Do not do this
+#build --define=use_fast_cpp_protos=true
+
 # Make Bazel print out all options from rc files.
 common --announce_rc
 
@@ -679,9 +687,6 @@ build:release_linux_base --linkopt=-Wl,--undefined-version
 
 # Container environment settings below this point.
 # Use Python 3.X as installed in container image
-build:release_linux_base --action_env PYTHON_BIN_PATH="/usr/bin/python3"
-build:release_linux_base --action_env PYTHON_LIB_PATH="/usr/lib/tf_python"
-build:release_linux_base --python_path="/usr/bin/python3"
 # Set Clang as compiler. Use the actual path to clang installed in container.
 build:release_linux_base --repo_env=CC="/usr/lib/llvm-18/bin/clang"
 build:release_linux_base --repo_env=BAZEL_COMPILER="/usr/lib/llvm-18/bin/clang"

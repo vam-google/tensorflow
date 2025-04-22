@@ -9,12 +9,6 @@ load("//tensorflow/core/platform:build_config_root.bzl", "tf_additional_license_
 
 package(default_visibility = ["//visibility:private"])
 
-pkg_zip(
-    name = "libtensorflow_proto",
-    srcs = ["//tensorflow/core:protos_all_proto_srcs"],
-    strip_prefix = "/external/local_tsl",
-)
-
 pkg_tar(
     name = "libtensorflow",
     extension = "tar.gz",
