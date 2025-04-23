@@ -306,13 +306,6 @@ absl::Status PinnedAllocation::Process(const BitcastSplitFn& bitcast_split_fn) {
   }
   HloInstruction* producing_instruction = AddGetTupleElements();
   HloComputation* computation = producing_instruction->parent();
-
-  if (memory_space() == MemorySpace::kAlternate &&
-      mutable_split_shape().has_value()) {
-    CHECK(Shape::Equal().IgnoreSplitConfigInLayout()(
-        producing_instruction->shape(), mutable_split_shape().value()));
-    *producing_instruction->mutable_shape() = mutable_split_shape().value();
-  }
   return UpdateUses(computation, producing_instruction, bitcast_split_fn);
 }
 
@@ -365,10 +358,6 @@ int64_t CopyAllocation::earliest_available_time() const {
 absl::Status CopyAllocation::Process(const BitcastSplitFn& bitcast_split_fn) {
   // Copy allocations need to insert asynchronous copy nodes.
   Shape shape = defining_position().shape();
-  if (memory_space() == MemorySpace::kAlternate && sync_mem_op_ != nullptr &&
-      mutable_split_shape().has_value()) {
-    *sync_mem_op_->mutable_shape() = mutable_split_shape().value();
-  }
   HloInstruction* producing_instruction = AddGetTupleElements();
   HloComputation* computation = producing_instruction->parent();
   if (sync_mem_op_ != nullptr && sync_mem_op_->opcode() != HloOpcode::kCopy) {
@@ -394,16 +383,9 @@ absl::Status CopyAllocation::Process(const BitcastSplitFn& bitcast_split_fn) {
     TF_RETURN_IF_ERROR(
         copy_start_->ReplaceOperandWith(0, producing_instruction));
   } else {
-    Shape dest_shape;
-    if (memory_space() == MemorySpace::kAlternate &&
-        mutable_split_shape().has_value()) {
-      dest_shape = mutable_split_shape().value();
-    } else if (memory_space() == MemorySpace::kDefault && shape.has_layout() &&
-               shape.layout().split_configs_size() > 0) {
-      dest_shape = shape;
+    Shape dest_shape = shape;
+    if (memory_space() == MemorySpace::kDefault) {
       dest_shape.mutable_layout()->clear_split_configs();
-    } else {
-      dest_shape = shape;
     }
     copy_start_ = computation->AddInstruction(HloInstruction::CreateCopyStart(
         ShapeUtil::MakeTupleShape(
@@ -857,7 +839,7 @@ absl::Status ParentAllocation::Process(const BitcastSplitFn& bitcast_split_fn) {
   // in the default memory space.
   HloInstruction* producing_instruction =
       original_allocation_.AddGetTupleElements();
-  int new_tuple_index = calling_instruction_->shape().tuple_shapes_size();
+  int new_tuple_index = calling_instruction_->shape().tuple_shapes().size();
 
   TF_ASSIGN_OR_RETURN(
       HloInstruction * new_while_operand,

@@ -311,9 +311,6 @@ class Shape {
   absl::Span<const int64_t> dimensions() const {
     return array_state().dimensions;
   }
-  absl::Span<int64_t> mutable_dimensions() {
-    return absl::MakeSpan(array_state().dimensions);
-  }
 
   // Returns the number of top-level tuple components in this shape.
   // Precondition: this is a tuple shape.
@@ -659,10 +656,6 @@ class ProgramShape {
   // Methods for accessing and manipulating the Shape of the parameters.
   int parameters_size() const { return parameters_.size(); }
   const Shape& parameters(int index) const { return parameters_[index]; }
-  Shape* add_parameters() {
-    parameters_.emplace_back();
-    return &parameters_.back();
-  }
   Shape* mutable_parameters(int index) { return &parameters_[index]; }
   void AddParameter(Shape shape, std::string name) {
     parameters_.push_back(std::move(shape));

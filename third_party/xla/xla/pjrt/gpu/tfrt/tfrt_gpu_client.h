@@ -73,6 +73,7 @@ limitations under the License.
 #include "xla/tsl/framework/allocator.h"
 #include "xla/tsl/platform/threadpool.h"
 #include "xla/util.h"
+#include "xla/xla.pb.h"
 #include "xla/xla_data.pb.h"
 #include "tsl/platform/fingerprint.h"
 
@@ -121,6 +122,7 @@ class TfrtGpuDevice final : public PjRtDevice {
   struct Options {
     int id;
     int32_t process_index;
+    int slice_index;
     PjRtLocalDeviceId local_device_id;
     PjRtLocalHardwareId local_hardware_id;
     se::StreamExecutor* executor;
@@ -129,6 +131,8 @@ class TfrtGpuDevice final : public PjRtDevice {
     int max_inflight_computations;
     std::string platform_version;
     std::string compute_capability;
+    std::string device_vendor;
+    int core_count;
   };
 
   explicit TfrtGpuDevice(Options&& options);
@@ -703,6 +707,8 @@ class TfrtGpuExecutable final : public PjRtLoadedExecutable {
   absl::Span<PjRtDevice* const> addressable_devices() const override {
     return addressable_devices_;
   }
+
+  absl::StatusOr<CompiledMemoryStats> GetCompiledMemoryStats() const override;
 
   using PjRtLoadedExecutable::Execute;
   absl::StatusOr<std::vector<std::vector<std::unique_ptr<PjRtBuffer>>>> Execute(

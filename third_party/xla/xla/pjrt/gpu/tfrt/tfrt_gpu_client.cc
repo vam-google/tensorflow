@@ -56,6 +56,7 @@ limitations under the License.
 #include "xla/layout.h"
 #include "xla/layout_util.h"
 #include "xla/literal.h"
+#include "xla/pjrt/compile_options.pb.h"
 #include "xla/pjrt/gpu/gpu_helpers.h"
 #include "xla/pjrt/gpu/gpu_topology.h"
 #include "xla/pjrt/gpu/gpu_topology.pb.h"
@@ -83,6 +84,7 @@ limitations under the License.
 #include "xla/service/computation_placer.h"
 #include "xla/service/executable.h"
 #include "xla/service/generic_transfer_manager.h"
+#include "xla/service/hlo.pb.h"
 #include "xla/service/hlo_cost_analysis.h"
 #include "xla/service/maybe_owning_device_memory.h"
 #include "xla/service/shaped_buffer.h"
@@ -94,6 +96,7 @@ limitations under the License.
 #include "xla/status_macros.h"
 #include "xla/stream_executor/cuda/cuda_compute_capability.h"
 #include "xla/stream_executor/device_description.h"
+#include "xla/stream_executor/device_description.pb.h"
 #include "xla/stream_executor/device_memory.h"
 #include "xla/stream_executor/device_memory_allocator.h"
 #include "xla/stream_executor/integrations/tf_allocator_adapter.h"
@@ -948,9 +951,18 @@ TfrtGpuDevice::TfrtGpuDevice(Options&& options)
       description_(options.id, options.process_index, options.platform_version),
       max_inflight_computations_semaphore_(
           /*capacity=*/options.max_inflight_computations) {
+  std::array<int, 1> coords = {local_device_id_.value()};
+  description_.SetCoords(coords);
+  std::vector<int64_t> v_coords(description_.coords().begin(),
+                                description_.coords().end());
+
   description_.SetAttributes({
+      {"coords", xla::PjRtDeviceAttribute(v_coords)},
+      {"device_vendor", options.device_vendor},
+      {"slice_index", static_cast<int64_t>(options.slice_index)},
       {"compute_capability",
        xla::PjRtDeviceAttribute(options.compute_capability)},
+      {"core_count", static_cast<int64_t>(options.core_count)},
   });
 
   description_.SetDebugString(absl::StrCat("TFRT_GPU_", id_));
@@ -1971,6 +1983,7 @@ GetTfrtGpuDevices(LocalClient* xla_client) {
     options.id = i;
     // TODO: b/382117736 - Support multi-host
     options.process_index = 0;
+    options.slice_index = 0;
     options.local_device_id = PjRtLocalDeviceId(i);
     options.local_hardware_id = PjRtLocalHardwareId(i);
     options.executor = executor;
@@ -1982,7 +1995,9 @@ GetTfrtGpuDevices(LocalClient* xla_client) {
         std::unique_ptr<xla::se::DeviceDescription> desc,
         platform->DescriptionForDevice(options.local_hardware_id.value()));
     options.platform_version = desc->name();
+    options.device_vendor = desc->device_vendor();
     options.compute_capability = MakeComputeCapabilityString(desc.get());
+    options.core_count = desc->core_count();
 
     auto device = std::make_unique<TfrtGpuDevice>(std::move(options));
     devices.push_back(std::move(device));
@@ -3470,6 +3485,24 @@ absl::Status TfrtGpuExecutable::SetUpDonation(bool tuple_inputs) {
         std::move(parameters_to_donate));
   }
   return absl::OkStatus();
+}
+
+absl::StatusOr<CompiledMemoryStats> TfrtGpuExecutable::GetCompiledMemoryStats()
+    const {
+  if (executables_.size() != 1) {
+    return Unimplemented(
+        "Retrieving CompiledMemoryStats is not supported for multiple "
+        "executables.");
+  }
+  CompiledMemoryStats memory_stats = CompiledMemoryStats();
+  memory_stats.generated_code_size_in_bytes = SizeOfGeneratedCodeInBytes();
+  const HloProto* proto = executables_[0]->executable()->hlo_proto();
+  if (proto != nullptr) {
+    memory_stats.serialized_hlo_proto = proto->SerializeAsString();
+  }
+  memory_stats.PopulateBufferStatsFromAllocations(
+      executables_[0]->executable()->GetAllocations());
+  return memory_stats;
 }
 
 absl::StatusOr<TfrtGpuBuffer::DonationTransaction>

@@ -306,6 +306,18 @@ cc_library(
     ],
 )
 
+tf_cc_test(
+    name = "utils_test",
+    srcs = ["utils/utils_test.cc"],
+    deps = [
+        ":utils",
+        "@com_google_googletest//:gtest_main",
+        "@llvm-project//mlir:ArithDialect",
+        "@llvm-project//mlir:IR",
+        "@llvm-project//mlir:Support",
+    ],
+)
+
 cc_library(
     name = "attribute_utils",
     srcs = ["utils/attribute_utils.cc"],
@@ -1104,6 +1116,8 @@ cc_library(
         "@llvm-project//mlir:TransformUtils",
         "@llvm-project//mlir:Transforms",
         "@local_xla//xla/mlir_hlo",
+        "@local_xla//xla/mlir_hlo:type_conversion",
+        "@local_xla//xla/mlir_hlo:unfuse_batch_norm",
         "@stablehlo//:stablehlo_ops",
     ],
 )

@@ -65,6 +65,7 @@ limitations under the License.
 #include "xla/service/hlo.pb.h"
 #include "xla/service/hlo_module_config.h"
 #include "xla/service/hlo_module_util.h"
+#include "xla/service/slow_operation_alarm.h"
 #include "xla/shape_layout.h"
 #include "xla/shape_util.h"
 #include "xla/status_macros.h"
@@ -1161,6 +1162,11 @@ FunctionalHloRunner::CreateArgumentsOnDevice(
         client, executable, running_options, flatten_arguments);
   }
 
+  SlowOperationAlarm alarm(
+      absl::Seconds(5),
+      absl::StrFormat("Argument initialization is slow. Consider changing "
+                      "--hlo_argument_mode."));
+
   absl::Span<PjRtDevice* const> addressable_devices =
       executable->addressable_devices();
   size_t num_addressable_devices = addressable_devices.size();
@@ -1185,7 +1191,7 @@ FunctionalHloRunner::CreateArgumentsOnDevice(
           ModuleArgumentMode::kUseZerosAsInput;
 
   for (int i = 0; i < num_addressable_devices; ++i) {
-    VLOG(3) << "Creating fake argument for device " << i;
+    VLOG(3) << "Creating fake arguments for device " << i;
     LiteralVec& argument_literals =
         per_device_argument_literals[addressable_devices[i]->id()];
     int executable_idx = hlo_modules.size() == 1
@@ -1202,7 +1208,8 @@ FunctionalHloRunner::CreateArgumentsOnDevice(
       if (flatten_arguments) {
         CHECK_EQ(params.size(), 1);
         CHECK(params.front()->shape().IsTuple());
-        argument_literals.reserve(params.front()->shape().tuple_shapes_size());
+        argument_literals.reserve(
+            params.front()->shape().tuple_shapes().size());
       } else {
         argument_literals.reserve(params.size());
       }
@@ -1379,7 +1386,8 @@ FunctionalHloRunner::CopyArgumentsToDevice(
       TF_RET_CHECK(entry_layout.parameter_count() == 1)
           << "entry_layout.parameter_count(): "
           << entry_layout.parameter_count();
-      TF_RET_CHECK(arg_i < entry_layout.parameter_shape(0).tuple_shapes_size());
+      TF_RET_CHECK(arg_i <
+                   entry_layout.parameter_shape(0).tuple_shapes().size());
       const Shape& shape = entry_layout.parameter_shape(0).tuple_shapes(arg_i);
       TF_RET_CHECK(!shape.IsTuple()) << "Nested tuples are not supported";
       return non_tuple_memory_space(shape);
