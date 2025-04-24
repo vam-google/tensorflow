@@ -1,6 +1,46 @@
+Index: BUILD.bazel
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/BUILD.bazel b/BUILD.bazel
+--- a/BUILD.bazel	(revision 5fda5abda3dee5f7a102c85860594bff8d8610bd)
++++ b/BUILD.bazel	(date 1745479147950)
+@@ -424,7 +424,7 @@
+         "//:cpp_features_proto",
+         "//:descriptor_proto",
+     ],
+-    command_line = "--cpp_out=$(OUT)",
++    command_line = "--cpp_out=dllexport_decl=PROTOBUF_EXPORT:$(OUT)",
+     runtime = "//src/google/protobuf",
+     visibility = ["//visibility:public"],
+ )
+Index: python/google/protobuf/__init__.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/python/google/protobuf/__init__.py b/python/google/protobuf/__init__.py
+--- a/python/google/protobuf/__init__.py	(revision 5fda5abda3dee5f7a102c85860594bff8d8610bd)
++++ b/python/google/protobuf/__init__.py	(date 1745479147950)
+@@ -8,3 +8,9 @@
+ # Copyright 2007 Google Inc. All Rights Reserved.
+
+ __version__ = '5.28.3'
++
++if __name__ != '__main__':
++  try:
++    __import__('pkg_resources').declare_namespace(__name__)
++  except ImportError:
++    __path__ = __import__('pkgutil').extend_path(__path__, __name__)
+Index: src/google/protobuf/BUILD.bazel
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
 diff --git a/src/google/protobuf/BUILD.bazel b/src/google/protobuf/BUILD.bazel
 --- a/src/google/protobuf/BUILD.bazel	(revision 5fda5abda3dee5f7a102c85860594bff8d8610bd)
-+++ b/src/google/protobuf/BUILD.bazel	(date 1745097172041)
++++ b/src/google/protobuf/BUILD.bazel	(date 1745479147950)
 @@ -509,6 +509,7 @@
          "serial_arena.h",
          "thread_safe_arena.h",
@@ -9,16 +49,61 @@ diff --git a/src/google/protobuf/BUILD.bazel b/src/google/protobuf/BUILD.bazel
      ],
      copts = COPTS + select({
          "//build_defs:config_msvc": [],
-diff --git a/python/google/protobuf/__init__.py b/python/google/protobuf/__init__.py
---- a/python/google/protobuf/__init__.py	(revision 5fda5abda3dee5f7a102c85860594bff8d8610bd)
-+++ b/python/google/protobuf/__init__.py	(date 1745097184973)
-@@ -8,3 +8,9 @@
- # Copyright 2007 Google Inc. All Rights Reserved.
- 
- __version__ = '5.28.3'
+Index: build_defs/BUILD.bazel
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build_defs/BUILD.bazel b/build_defs/BUILD.bazel
+--- a/build_defs/BUILD.bazel	(revision 5fda5abda3dee5f7a102c85860594bff8d8610bd)
++++ b/build_defs/BUILD.bazel	(date 1745479147950)
+@@ -1,6 +1,7 @@
+ # Internal Starlark definitions for Protobuf.
+
+ load("@bazel_skylib//lib:selects.bzl", "selects")
++load("@bazel_skylib//rules:common_settings.bzl", "bool_flag")
+ load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
+ load("//bazel:cc_proto_library.bzl", starlark_cc_proto_library = "cc_proto_library")
+ load(":cc_proto_blacklist_test.bzl", "cc_proto_blacklist_test")
+@@ -13,6 +14,19 @@
+     ],
+ )
+
++bool_flag(
++    name = "use_dlls",
++    build_setting_default = False,
++    visibility = ["//visibility:public"],
++)
 +
-+if __name__ != '__main__':
-+  try:
-+    __import__('pkg_resources').declare_namespace(__name__)
-+  except ImportError:
-+    __path__ = __import__('pkgutil').extend_path(__path__, __name__)
++config_setting(
++    name = "config_use_dlls",
++    flag_values = {
++        ":use_dlls": "True",
++    },
++)
++
+ create_compiler_config_setting(
+     name = "config_msvc_cl",
+     value = "msvc-cl",
+Index: build_defs/cpp_opts.bzl
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build_defs/cpp_opts.bzl b/build_defs/cpp_opts.bzl
+--- a/build_defs/cpp_opts.bzl	(revision 5fda5abda3dee5f7a102c85860594bff8d8610bd)
++++ b/build_defs/cpp_opts.bzl	(date 1745479147950)
+@@ -22,6 +22,12 @@
+         "-Wno-sign-compare",
+         "-Wno-nonnull",
+     ],
++}) + select({
++    "//build_defs:config_use_d
+lls": [
++        "/DPROTOBUF_USE_DLLS",
++        "/DLIBPROTOBUF_EXPORTS",
++    ],
++    "//conditions:default": [],
+ })
+
+ # Android and MSVC builds do not need to link in a separate pthread library.
